@@ -1,0 +1,7 @@
+elpa/
+url/
+eshell/
+auto-save-list/
+**.elc
+session.*
+tramp

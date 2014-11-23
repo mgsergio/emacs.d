@@ -6,7 +6,7 @@
 
 ;; Show column and line numbers
 (column-number-mode)
-(global-linum-mode)
+;;(global-linum-mode)
 
 ;; Set a cool sublime theme
 (load-theme 'monokai t)

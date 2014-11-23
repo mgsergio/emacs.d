@@ -24,6 +24,7 @@
 (cua-mode)
 (setq cua-enable-cua-keys nil)  ;; Disable cua c-x/c-c/c-v bindings
 
+(fullscreen-mode)
 
 ;; Seclusion-mode
 ;(require 'seclusion-mode)
@@ -68,18 +69,7 @@
 (require 'metrika-c++-style)
 (add-hook 'c-initialization-hook 'metrika-set-c++-style)
 
+(require 'my-favorite-c++-style)
+
 ;; Useful key bindings
 (global-set-key (kbd "<f5>") 'compile)
-
-(defun fullscreen ()
-  (interactive)
-  (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
-	    		 '(2 "_NET_WM_STATE_FULLSCREEN" 0)))
-
-(global-set-key [f11] 'fullscreen)
-;(defun fullscreen (&optional f)
-;  (interactive)
-;  (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
-; 	    		 '(2 "_NET_WM_STATE_MAXIMIZED_VERT" 0))
-;  (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
-;	    		 '(2 "_NET_WM_STATE_MAXIMIZED_HORZ" 0)))

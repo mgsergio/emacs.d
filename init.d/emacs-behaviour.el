@@ -10,6 +10,9 @@
 ;; No backups!
 (setq make-backup-files nil)
 
+;; Mo #Deamned-auto-save-trash#
+(setq auto-save-default nil)
+
 ;; Enable commands
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
@@ -40,3 +43,31 @@
 (global-set-key [home] 'My-smart-home)
 
 (provide 'emacs-behaviour)
+
+(require 'automargin)
+(setq automargin-target-width 100)
+(automargin-mode 1)
+
+
+;; Use long names instead of <N>s.
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'forward)
+
+;; Nice window switching
+(global-set-key [s-left] 'windmove-left)
+(global-set-key [s-right] 'windmove-right)
+(global-set-key [s-up] 'windmove-up)
+(global-set-key [s-down] 'windmove-down)
+
+
+;; Revert all buffers
+(defun revert-all-buffers ()
+  "Refreshes all open buffers from their respective files."
+  (interactive)
+  (dolist (buf (buffer-list))
+    (with-current-buffer buf
+      (when (and (buffer-file-name)
+		 (file-exists-p (buffer-file-name))
+		 (not (buffer-modified-p)))
+	(revert-buffer t t t))))
+  (message "Refreshed open files."))

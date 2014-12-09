@@ -1,9 +1,6 @@
 (require 'package)
 (package-initialize) ; force all packages to load
 
-;; Manually maintained packages
-(add-to-list 'load-path "~/.emacs.d/elpa-manual")
-
 ;; My Emacs settings
 (add-to-list 'load-path "~/.emacs.d/init.d")
 
@@ -19,18 +16,10 @@
 (require 'look-and-feel)
 (require 'emacs-behaviour)
 
-
 ;; Toggle cua-mode
 (cua-mode)
 (setq cua-enable-cua-keys nil)  ;; Disable cua c-x/c-c/c-v bindings
 
-(fullscreen-mode)
-
-;; Seclusion-mode
-;(require 'seclusion-mode)
-
-;; Setup sr-speedbar
-(require 'sr-speedbar)
 
 ;; Dear speedbar, please show me all files,
 ;; not just those you know
@@ -47,14 +36,13 @@
 
 
 ;; Nice item list instead of buffer of choices
-(require 'ido)
+(require 'ido)   ; TODO Use ehlm instead
 (ido-mode t)
 (setq ido-enable-flex-match t)
 
-;; Move text
-(require 'move-text)
+;; TODO: Move to behaviour
 (move-text-default-bindings)
-
+(fullscreen-mode)
 
 ;; Setup cider, a repl mode for clojure, and more
 ;; (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
@@ -69,7 +57,8 @@
 (require 'metrika-c++-style)
 (add-hook 'c-initialization-hook 'metrika-set-c++-style)
 
-(require 'my-favorite-c++-style)
-
 ;; Useful key bindings
 (global-set-key (kbd "<f5>") 'compile)
+
+
+;; TODO: Use helm-projectile

@@ -28,8 +28,8 @@
 (global-unset-key (kbd "<C-down>"))
 (global-unset-key (kbd "<M-left>"))
 (global-unset-key (kbd "<M-right>"))
-;;(global-unset-key (kbd "<M-up>"))
-;;(global-unset-key (kbd "<M-down>"))
+(global-unset-key (kbd "<M-up>"))
+(global-unset-key (kbd "<M-down>"))
 
 
 ;; Smart home

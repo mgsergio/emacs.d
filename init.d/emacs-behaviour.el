@@ -44,6 +44,7 @@
 
 (provide 'emacs-behaviour)
 
+;; TODO: Switch to centered-window-mode
 (require 'automargin)
 (setq automargin-target-width 100)
 (automargin-mode 1)

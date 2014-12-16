@@ -42,7 +42,6 @@
 
 (global-set-key [home] 'My-smart-home)
 
-(provide 'emacs-behaviour)
 
 ;; TODO: Switch to centered-window-mode
 (require 'automargin)
@@ -72,3 +71,6 @@
 		 (not (buffer-modified-p)))
 	(revert-buffer t t t))))
   (message "Refreshed open files."))
+
+
+(provide 'emacs-behaviour)

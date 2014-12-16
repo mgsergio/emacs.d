@@ -35,10 +35,29 @@
 (global-set-key (kbd "<f12>") 'my-sr-speedbar-toggle-and-select)
 
 
-;; Nice item list instead of buffer of choices
-(require 'ido)   ; TODO Use ehlm instead
-(ido-mode t)
-(setq ido-enable-flex-match t)
+;; The only way of doing things!
+(require 'helm-config)
+(helm-mode 1)
+(define-key global-map [remap find-file] 'helm-find-files)
+(define-key global-map [remap occur] 'helm-occur)
+(define-key global-map [remap list-buffers] 'helm-buffers-list)
+(define-key global-map [remap dabbrev-expand] 'helm-dabbrev)
+(global-set-key (kbd "M-x") 'helm-M-x)
+(global-set-key (kbd "C-x b") 'helm-mini)
+(global-set-key (kbd "M-y") 'helm-show-kill-ring)
+(unless (boundp 'completion-in-region-function)
+  (define-key lisp-interaction-mode-map [remap completion-at-point] 'helm-lisp-completion-at-point)
+  (define-key emacs-lisp-mode-map       [remap completion-at-point] 'helm-lisp-completion-at-point))
+
+(setq
+;; helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
+ helm-buffers-fuzzy-matching           t ; fuzzy matching buffer names when non--nil
+ helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
+ helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
+ helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
+ helm-ff-file-name-history-use-recentf t)
+
+
 
 ;; TODO: Move to behaviour
 (move-text-default-bindings)

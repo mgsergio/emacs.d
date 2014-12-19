@@ -1,5 +1,16 @@
 (require 'package)
-(package-initialize) ; force all packages to load
+(setq package-list '(ascii-art-to-unicode
+		     automargin cider
+		     clojure-mode ess
+		     fullscreen-mode
+		     helm-projectile
+		     helm async jabber
+		     monokai-theme
+		     move-text
+		     projectile
+		     pkg-info
+		     epl f dash s))
+
 
 ;; My Emacs settings
 (add-to-list 'load-path "~/.emacs.d/init.d")
@@ -12,6 +23,18 @@
 	     '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (add-to-list 'package-archives
 	     '("marmalade" . "http://marmalade-repo.org/packages/") t)
+
+(package-initialize) ; force all packages to load
+
+;; fetch the list of packages available
+(unless package-archive-contents
+  (package-refresh-contents))
+
+;; install mising packages
+(dolist (package package-list)
+  (unless (package-installed-p package)
+    (package-install package)))
+
 
 (require 'look-and-feel)
 (require 'emacs-behaviour)
@@ -30,9 +53,6 @@
   (interactive)
   (sr-speedbar-toggle)
   (sr-speedbar-select-window))
-
-;; Toggle speedbar with F12
-(global-set-key (kbd "<f12>") 'my-sr-speedbar-toggle-and-select)
 
 
 ;; The only way of doing things!
@@ -84,6 +104,3 @@
 
 ;; Useful key bindings
 (global-set-key (kbd "<f5>") 'compile)
-
-
-;; TODO: Use helm-projectile

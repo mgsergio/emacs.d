@@ -58,6 +58,12 @@
  helm-ff-file-name-history-use-recentf t)
 
 
+;; Navigete easelly inside project (.gin, .svn, ...)
+(setq projectile-enable-caching t)
+(projectile-global-mode)
+(setq projectile-completion-system 'helm)
+(helm-projectile-on)
+
 
 ;; TODO: Move to behaviour
 (move-text-default-bindings)

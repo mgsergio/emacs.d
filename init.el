@@ -104,3 +104,7 @@
 
 ;; Useful key bindings
 (global-set-key (kbd "<f5>") 'compile)
+
+
+;; Keyboard layout
+(setq default-input-method "russian-computer")

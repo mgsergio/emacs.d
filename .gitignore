@@ -5,3 +5,4 @@ auto-save-list/
 **.elc
 session.*
 tramp
+org/*.el

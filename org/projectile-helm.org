@@ -1,0 +1,9 @@
+* Navigete easelly inside project (.gin, .svn, ...)
+#+begin_src emacs-lisp
+  (eval-after-load "setup-helm"
+    '(progn
+      (setq projectile-enable-caching t)
+      (projectile-global-mode)
+      (setq projectile-completion-system 'helm)
+      (helm-projectile-on)))
+#+end_src

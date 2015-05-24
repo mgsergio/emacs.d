@@ -1,0 +1,164 @@
+* Disable useless controls
+#+begin_src emacs-lisp
+  (setq inhibit-startup-screen t)
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+#+end_src
+
+* Show column and line numbers
+#+begin_src emacs-lisp
+  (column-number-mode)
+  ;;(global-linum-mode)
+#+end_src
+
+* Set a cool sublime theme
+#+begin_src emacs-lisp
+  (load-theme 'monokai t)
+#+end_src
+
+* Disable stupid beeping
+#+begin_src emacs-lisp
+  (setq ring-bell-function 'ignore)
+#+end_src
+
+* Useful modes
+#+begin_src emacs-lisp
+  (fullscreen-mode)
+
+  (cua-mode)
+  (setq cua-enable-cua-keys nil)  ;; Disable cua c-x/c-c/c-v bindings
+#+end_src
+
+* cc-mode Settings
+#+begin_src emacs-lisp
+  (add-to-list 'auto-mode-alist
+               '("\\.h\\'" . c++-mode))  ; C++-mode for .h files
+
+  (require 'metrika-c++-style)
+  (add-hook 'c-initialization-hook 'metrika-set-c++-style)
+#+end_src
+
+* Keyboard layout
+#+begin_src emacs-lisp
+  (setq default-input-method "russian-computer")
+#+end_src
+
+* Tune tabs alignment
+#+begin_src emacs-lisp
+  (setq tab-stop-list (number-sequence 4 200 4))
+#+end_src
+
+* Highlight matching paren
+#+begin_src emacs-lisp
+  (show-paren-mode 1)
+#+end_src
+
+* Remove trailing whitespaces before save.
+#+begin_src emacs-lisp
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+#+end_src
+
+* Autosaves and backups
+#+begin_src emacs-lisp
+  ;; No backups!
+  (setq make-backup-files nil)
+
+  ;; Mo #Deamned-auto-save-trash#
+  (setq auto-save-default nil)
+#+end_src
+
+* Margins
+** TODO Switch to centered-window-mode
+#+begin_src emacs-lisp
+   (require 'automargin)
+   (setq automargin-target-width 100)
+   (automargin-mode 1)
+#+end_src
+
+* Bindings
+** Don't ever use arrows!!!
+#+begin_src emacs-lisp
+   (global-unset-key (kbd "<left>"))
+   (global-unset-key (kbd "<right>"))
+   (global-unset-key (kbd "<up>"))
+   (global-unset-key (kbd "<down>"))
+   (global-unset-key (kbd "<C-left>"))
+   (global-unset-key (kbd "<C-right>"))
+   (global-unset-key (kbd "<C-up>"))
+   (global-unset-key (kbd "<C-down>"))
+   (global-unset-key (kbd "<M-left>"))
+   (global-unset-key (kbd "<M-right>"))
+   (global-unset-key (kbd "<M-up>"))
+   (global-unset-key (kbd "<M-down>"))
+#+end_src
+
+** Nice window switching
+#+begin_src emacs-lisp
+   (global-set-key [s-left] 'windmove-left)
+   (global-set-key [s-right] 'windmove-right)
+   (global-set-key [s-up] 'windmove-up)
+   (global-set-key [s-down] 'windmove-down)
+#+end_src
+
+** Useful key bindings
+#+begin_src emacs-lisp
+  (global-set-key (kbd "<f5>") 'compile)
+  (move-text-default-bindings) ;; move text up'n down
+#+end_src
+
+* Use long names instead of <N>s.
+#+begin_src emacs-lisp
+  (require 'uniquify)
+  (setq uniquify-buffer-name-style 'forward)
+#+end_src
+
+* Enable commands
+#+begin_src emacs-lisp
+  (put 'downcase-region 'disabled nil)
+  (put 'upcase-region 'disabled nil)
+#+end_src
+
+* Custom functions
+** Revert all buffers
+#+begin_src emacs-lisp
+  (defun revert-all-buffers ()
+    "Refreshes all open buffers from their respective files."
+    (interactive)
+    (dolist (buf (buffer-list))
+      (with-current-buffer buf
+        (when (and (buffer-file-name)
+                   (file-exists-p (buffer-file-name))
+                   (not (buffer-modified-p)))
+          (revert-buffer t t t))))
+    (message "Refreshed open files."))
+#+end_src
+
+** Smart home
+#+begin_src emacs-lisp
+     (defun My-smart-home () "Odd home to beginning of line, even home to beginning of text/code."
+    (interactive)
+    (if (and (eq last-command 'My-smart-home)
+             (/= (line-beginning-position) (point)))
+        (beginning-of-line)
+      (beginning-of-line-text)))
+
+  (global-set-key [home] 'My-smart-home)
+#+end_src
+
+* Unused
+;; Setup cider, a repl mode for clojure, and more
+;; (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
+;; (setq nrepl-hide-special-buffers t) ;; hiding special buffers
+;; (etq cider-repl-tab-command 'indent-for-tab-command) ;; tab ke behaviour in repl
+
+** Speedbar
+;; Dear speedbar, please show me all files,
+;; not just those you know
+(custom-set-variables
+ '(speedbar-show-unknown-files t))
+
+(defun my-sr-speedbar-toggle-and-select ()
+  (interactive)
+  (sr-speedbar-toggle)
+  (sr-speedbar-select-window))

@@ -105,6 +105,8 @@
 #+begin_src emacs-lisp
   (global-set-key (kbd "<f5>") 'compile)
   (move-text-default-bindings) ;; move text up'n down
+  (global-set-key (kbd "C-<f5>") 'tramp-cleanup-all-connections) ;; wake up after server came back
+  (global-set-key (kbd "C-<f6>") 'tramp-cleanup-all-buffers) ;; and also kill all tramp buffers
 #+end_src
 
 * Use long names instead of <N>s.

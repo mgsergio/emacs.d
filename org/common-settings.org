@@ -69,11 +69,10 @@
 #+end_src
 
 * Margins
-** TODO Switch to centered-window-mode
+** TODO make better implementation myself
 #+begin_src emacs-lisp
-   (require 'automargin)
-   (setq automargin-target-width 100)
-   (automargin-mode 1)
+  (require 'centered-window-mode)
+  ;; (centered-window-mode t)
 #+end_src
 
 * Bindings

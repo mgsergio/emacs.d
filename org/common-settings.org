@@ -28,6 +28,8 @@
 
   (cua-mode)
   (setq cua-enable-cua-keys nil)  ;; Disable cua c-x/c-c/c-v bindings
+
+  (ac-config-default) ;; setup auto-complete
 #+end_src
 
 * cc-mode Settings

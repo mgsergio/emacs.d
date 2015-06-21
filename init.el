@@ -7,6 +7,7 @@
 		     helm-projectile
 		     helm async jabber
 		     monokai-theme
+		     auto-complete
 		     move-text
 		     projectile
 		     pkg-info

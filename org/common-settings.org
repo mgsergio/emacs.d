@@ -149,6 +149,19 @@
   (global-set-key [home] 'My-smart-home)
 #+end_src
 
+** New empty buffer
+#+begin_src emacs-lisp
+  (defun my::new-buffer ()
+    "Create new empty buffer"
+    (interactive)
+    (set-window-buffer (selected-window)
+                       (let* ((next-name (generate-new-buffer-name "*untitled*"))
+                              (users-buffer-name (read-string
+                                                  (format "Buffer name (default %s):" next-name)
+                                                  nil nil next-name)))
+                         (generate-new-buffer users-buffer-name))))
+#+end_src
+*** TODO Make new buffer inherit projectile mode too
 * Unused
 ;; Setup cider, a repl mode for clojure, and more
 ;; (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)

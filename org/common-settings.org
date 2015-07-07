@@ -157,7 +157,7 @@
     (set-window-buffer (selected-window)
                        (let* ((next-name (generate-new-buffer-name "*untitled*"))
                               (users-buffer-name (read-string
-                                                  (format "Buffer name (default %s):" next-name)
+                                                  (format "Buffer name (default %s): " next-name)
                                                   nil nil next-name)))
                          (generate-new-buffer users-buffer-name))))
 #+end_src

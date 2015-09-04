@@ -1,5 +1,7 @@
 * List of additional LaTeX packages
 #+begin_src emacs-lisp
+  (require 'org-latex)
+  (setq org-export-latex-listings t)
   (add-to-list 'org-export-latex-packages-alist '("" "cmap" t))
   (add-to-list 'org-export-latex-packages-alist '("english,russian" "babel" t))
 #+end_src

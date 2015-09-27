@@ -1,7 +1,14 @@
 * List of additional LaTeX packages
 #+begin_src emacs-lisp
-  (require 'org-latex)
-  (setq org-export-latex-listings t)
-  (add-to-list 'org-export-latex-packages-alist '("" "cmap" t))
-  (add-to-list 'org-export-latex-packages-alist '("english,russian" "babel" t))
+  (if (version< (org-version) "8")
+      (progn
+        (require 'org-latex)
+        (setq org-export-latex-listings t)
+        (add-to-list 'org-export-latex-packages-alist '("" "cmap" t))
+        (add-to-list 'org-export-latex-packages-alist '("english,russian" "babel" t)))
+    (progn
+      (require 'ox-latex)
+      (setq org-latex-listings t)
+      (add-to-list 'org-latex-packages-alist '("" "cmap" t))
+      (add-to-list 'org-latex-packages-alist '("english,russian" "babel"))))
 #+end_src

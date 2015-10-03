@@ -6,9 +6,10 @@
 
 (defun my-favorite-set-c++-style ()
   (interactive)
-  (add-hook 'c++-mode-hook (lambda ()
-			     (c-set-style "Favorite"))))
+  (c-set-style "Favorite"))
 
 
-(c-add-style "Favorite" my-favorite-c++-style)
+(add-hook 'c-initialization-hook
+	  (lambda () (c-add-style "Favorite" my-favorite-c++-style)))
+
 (provide 'my-favorite-c++-style)

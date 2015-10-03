@@ -37,9 +37,13 @@
   (add-to-list 'auto-mode-alist
                '("\\.h\\'" . c++-mode))  ; C++-mode for .h files
 
+  (require 'google-c-style)
+  (require 'my-favorite-c++-style)
   (require 'metrika-c++-style)
-  (add-hook 'c-initialization-hook 'metrika-set-c++-style)
+  (add-hook 'c-mode-common-hook 'google-set-c-style)
 #+end_src
+
+** TODO Make CC-mode settings separate .org file.
 
 * Keyboard layout
 #+begin_src emacs-lisp

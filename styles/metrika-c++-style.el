@@ -81,8 +81,9 @@
 
 (defun metrika-set-c++-style ()
   (interactive)
-  (c-add-style "Metrika" metrika-c++-style)
-  (add-hook 'c++-mode-hook (lambda ()
-			     (c-set-style "Metrika"))))
+  (c-set-style "Metrika"))
+
+(add-hook 'c-initialization-hook
+	  (lambda () (c-add-style "Metrika" metrika-c++-style)))
 
 (provide 'metrika-c++-style)

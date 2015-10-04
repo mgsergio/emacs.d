@@ -2,7 +2,10 @@ elpa/
 url/
 eshell/
 auto-save-list/
-**.elc
+*.elc
 session.*
 tramp
 org/*.el
+projectile.cache
+projectile-bookmarks.eld
+recentf

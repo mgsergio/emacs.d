@@ -40,7 +40,8 @@
   (require 'google-c-style)
   (require 'my-favorite-c++-style)
   (require 'metrika-c++-style)
-  (add-hook 'c-mode-common-hook 'google-set-c-style)
+  (require 'mapsme-c-style)
+  (add-hook 'c-mode-common-hook 'mapsme-set-c-style)
 #+end_src
 
 ** TODO Make CC-mode settings separate .org file.

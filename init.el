@@ -55,6 +55,32 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ibuffer-saved-filter-groups
+   (quote
+    (("Programming"
+      ("Organizer"
+       (used-mode . org-mode))
+      ("Project"
+       (filename . ".*.pro"))
+      ("Sources"
+       (used-mode . c++-mode))))))
+ '(ibuffer-saved-filters
+   (quote
+    (("gnus"
+      ((or
+	(mode . message-mode)
+	(mode . mail-mode)
+	(mode . gnus-group-mode)
+	(mode . gnus-summary-mode)
+	(mode . gnus-article-mode))))
+     ("programming"
+      ((or
+	(mode . emacs-lisp-mode)
+	(mode . cperl-mode)
+	(mode . c-mode)
+	(mode . java-mode)
+	(mode . idl-mode)
+	(mode . lisp-mode)))))))
  '(org-agenda-files nil)
  '(speedbar-show-unknown-files t))
 (custom-set-faces
@@ -62,4 +88,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(fringe ((t (:background "#272822")))))

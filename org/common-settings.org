@@ -185,3 +185,8 @@
   (interactive)
   (sr-speedbar-toggle)
   (sr-speedbar-select-window))
+* Fix input echoing in python
+#+begin_src emacs-lisp
+  (add-hook 'inferior-python-mode-hook
+            (lambda () (setf comint-process-echoes t)))
+#+end_src

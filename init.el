@@ -12,6 +12,7 @@
 		     projectile
 		     pkg-info
 		     multiple-cursors
+		     magit
 		     epl f dash s))
 
 ;; Misc emacs scripts/funcitons

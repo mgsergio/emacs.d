@@ -1,7 +1,8 @@
-elpa/
-url/
-eshell/
-auto-save-list/
+elpa
+url
+eshell
+semanticdb
+auto-save-list
 *.elc
 session.*
 tramp

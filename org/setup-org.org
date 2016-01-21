@@ -1,3 +1,7 @@
+* Bindings
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-c a") 'org-agenda)
+#+end_src
 * List of additional LaTeX packages
 #+begin_src emacs-lisp
   (if (version< (org-version) "8")
@@ -11,4 +15,9 @@
       (setq org-latex-listings t)
       (add-to-list 'org-latex-packages-alist '("" "cmap" t))
       (add-to-list 'org-latex-packages-alist '("english,russian" "babel"))))
+#+end_src
+* org-habit
+#+begin_src emacs-lisp
+  (add-to-list 'org-modules 'org-habit)
+  (require 'org-habit)
 #+end_src

@@ -12,9 +12,10 @@
   ;;(global-linum-mode)
 #+end_src
 
-* Set a cool sublime theme
+* Theme
 #+begin_src emacs-lisp
-  (load-theme 'monokai t)
+  ;; (load-theme 'monokai t)
+  (load-theme 'solarized-dark t)
 #+end_src
 
 * Disable stupid beeping
@@ -73,13 +74,6 @@
 
   ;; Mo #Deamned-auto-save-trash#
   (setq auto-save-default nil)
-#+end_src
-
-* Margins
-** TODO make better implementation myself
-#+begin_src emacs-lisp
-  (require 'centered-window-mode)
-  ;; (centered-window-mode t)
 #+end_src
 
 * Bindings

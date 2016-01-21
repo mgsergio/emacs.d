@@ -1,19 +1,14 @@
 (require 'package)
-(setq package-list '(ascii-art-to-unicode
-		     centered-window-mode
-		     cider
-		     clojure-mode ess
-		     fullscreen-mode
+(setq package-list '(helm
 		     helm-projectile
-		     helm async jabber
 		     monokai-theme
+		     solarized-theme
 		     auto-complete
 		     move-text
-		     projectile
-		     pkg-info
 		     multiple-cursors
 		     magit
-		     epl f dash s))
+		     fullscreen-mode
+		     ))
 
 ;; Misc emacs scripts/funcitons
 (add-to-list 'load-path "~/.emacs.d/etc")

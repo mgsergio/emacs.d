@@ -41,6 +41,7 @@
 * Useful modes
 #+begin_src emacs-lisp
   (fullscreen-mode)
+  (global-set-key (kbd "C-c f") 'fullscreen-mode-fullscreen-toggle)
 
   (cua-mode)
   (setq cua-enable-cua-keys nil)  ;; Disable cua c-x/c-c/c-v bindings

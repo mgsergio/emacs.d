@@ -1,4 +1,9 @@
-* Disable useless controls
+* Appearence
+#+begin_src emacs-lisp
+  ;;(global-linum-mode)
+#+end_src
+
+** Disable useless controls
 #+begin_src emacs-lisp
   (setq inhibit-startup-screen t)
   (menu-bar-mode -1)
@@ -6,16 +11,26 @@
   (scroll-bar-mode -1)
 #+end_src
 
-* Show column and line numbers
-#+begin_src emacs-lisp
-  (column-number-mode)
-  ;;(global-linum-mode)
-#+end_src
-
-* Theme
+** Theme
 #+begin_src emacs-lisp
   ;; (load-theme 'monokai t)
   (load-theme 'solarized-dark t)
+#+end_src
+
+** mod-line
+#+begin_src emacs-lisp
+  ;; remove stupid box and line
+  (set-face-attribute 'mode-line nil
+                      :overline  'nil
+                      :underline 'nil
+                      :box nil)
+
+  (set-face-attribute 'mode-line-inactive nil
+                      :overline  'nil
+                      :underline 'nil
+                      :box nil)  (setq make-backup-files nil)
+
+  (column-number-mode)
 #+end_src
 
 * Disable stupid beeping

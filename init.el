@@ -8,6 +8,7 @@
 		     multiple-cursors
 		     magit
 		     fullscreen-mode
+		     writeroom-mode
 		     ))
 
 ;; Misc emacs scripts/funcitons

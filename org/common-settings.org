@@ -2,7 +2,11 @@
 #+begin_src emacs-lisp
   ;;(global-linum-mode)
 #+end_src
-
+** WriteRoomMode
+#+begin_src emacs-lisp
+  (setf writeroom-width 100)
+  (global-set-key (kbd "C-c w") 'writeroom-mode)
+#+end_src
 ** Disable useless controls
 #+begin_src emacs-lisp
   (setq inhibit-startup-screen t)

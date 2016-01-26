@@ -97,6 +97,10 @@
 #+end_src
 
 * Bindings
+** Disabel C-x C-c
+#+begin_src emacs-lisp
+  (global-unset-key (kbd "C-x C-c"))
+#+end_src
 ** Don't ever use arrows!!!
 #+begin_src emacs-lisp
    (global-unset-key (kbd "<left>"))
@@ -144,6 +148,12 @@
 #+end_src
 
 * Custom functions
+** Shortcuts for exiting
+#+begin_src emacs-lisp
+  (defun exit-emacs ()
+    (interactive)
+    (save-buffers-kill-terminal))
+#+end_src
 ** Revert all buffers
 #+begin_src emacs-lisp
   (defun revert-all-buffers ()

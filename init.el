@@ -9,6 +9,10 @@
 		     magit
 		     fullscreen-mode
 		     writeroom-mode
+		     haskell-mode
+		     slime
+		     ace-window
+		     ace-jump-mode
 		     ))
 
 ;; Misc emacs scripts/funcitons

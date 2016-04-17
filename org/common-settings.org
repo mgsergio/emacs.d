@@ -5,6 +5,7 @@
 ** WriteRoomMode
 #+begin_src emacs-lisp
   (setf writeroom-width 100)
+  (setf writeroom-mode-line t)
   (global-set-key (kbd "C-c w") 'writeroom-mode)
 #+end_src
 ** Disable useless controls
@@ -125,6 +126,10 @@
    (global-set-key [s-down] 'windmove-down)
 #+end_src
 
+** Ace
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-c j") 'ace-jump-mode)
+#+end_src
 ** Useful key bindings
 #+begin_src emacs-lisp
   (global-set-key (kbd "<f5>") 'compile)
@@ -213,4 +218,10 @@
 #+begin_src emacs-lisp
   (add-hook 'inferior-python-mode-hook
             (lambda () (setf comint-process-echoes t)))
+#+end_src
+* Setup env
+Setup env as so like emacs was started from a command line.
+#+begin_src emacs-lisp
+  (when (memq window-system '(mac ns))
+    (exec-path-from-shell-initialize))
 #+end_src

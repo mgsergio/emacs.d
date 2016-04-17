@@ -13,6 +13,7 @@
 		     slime
 		     ace-window
 		     ace-jump-mode
+		     exec-path-from-shell
 		     ))
 
 ;; Misc emacs scripts/funcitons

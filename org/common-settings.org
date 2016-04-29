@@ -225,3 +225,9 @@ Setup env as so like emacs was started from a command line.
   (when (memq window-system '(mac ns))
     (exec-path-from-shell-initialize))
 #+end_src
+* SLIME
+#+begin_src emacs-lisp
+  (setf slime-contribs '(slime-repl))
+  (setf slime-lisp-implementations
+        '((sbcl ("sbcl"))))
+#+end_src

@@ -76,6 +76,7 @@
 * Tune tabs alignment
 #+begin_src emacs-lisp
   (setq tab-stop-list (number-sequence 4 200 4))
+  (setq-default indent-tabs-mode nil)
 #+end_src
 
 * Highlight matching paren

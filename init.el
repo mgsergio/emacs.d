@@ -1,20 +1,21 @@
 (require 'package)
 (setq package-list '(helm
-		     helm-projectile
-		     monokai-theme
-		     solarized-theme
-		     auto-complete
-		     move-text
-		     multiple-cursors
-		     magit
-		     fullscreen-mode
-		     writeroom-mode
-		     haskell-mode
-		     slime
-		     ace-window
-		     ace-jump-mode
-		     exec-path-from-shell
-		     ))
+                     helm-projectile
+                     monokai-theme
+                     solarized-theme
+                     auto-complete
+                     move-text
+                     multiple-cursors
+                     magit
+                     fullscreen-mode
+                     writeroom-mode
+                     haskell-mode
+                     js2-mode
+                     slime
+                     ace-window
+                     ace-jump-mode
+                     exec-path-from-shell
+                     ))
 
 ;; Misc emacs scripts/funcitons
 (add-to-list 'load-path "~/.emacs.d/etc")
@@ -24,9 +25,9 @@
 
 ;; Add repos with lots of cool packages
 (add-to-list 'package-archives
-	     '("melpa" . "http://melpa.milkbox.net/packages/") t)
+             '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (add-to-list 'package-archives
-	     '("marmalade" . "http://marmalade-repo.org/packages/") t)
+             '("marmalade" . "http://marmalade-repo.org/packages/") t)
 
 (package-initialize) ; force all packages to load
 
@@ -43,20 +44,20 @@
 (require 'ob-tangle)
 (let ((org-files-directory (expand-file-name "org" user-emacs-directory)))
   (mapc #'org-babel-load-file
-	(directory-files org-files-directory t "\\.org$")))
+        (directory-files org-files-directory t "\\.org$")))
 
 ;; Start emacs server unless we have one
 (add-hook 'after-init-hook
-	  (lambda ()
-	    (require 'server)
-	    (unless (server-running-p)
-	      (server-start))))
+          (lambda ()
+            (require 'server)
+            (unless (server-running-p)
+              (server-start))))
 
 ;; Play with semantic
 (setf semanticdb-project-roots '("/Users/mgsergio/omim"))
 (setf semantic-default-submodes '(global-semanticdb-minor-mode
-				  global-semantic-idle-scheduler-mode
-				  global-semantic-stickyfunc-mode))
+                                  global-semantic-idle-scheduler-mode
+                                  global-semantic-stickyfunc-mode))
 (semantic-mode 1)
 
 

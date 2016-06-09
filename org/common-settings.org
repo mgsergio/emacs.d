@@ -76,6 +76,11 @@
 
   (setf js2-basic-offset 2)
 #+end_src
+* json-mode
+#+begin_src emacs-lisp
+  (setf json-reformat:indent-width 2
+        js-indent-level 2)
+#+end_src
 * Keyboard layout
 #+begin_src emacs-lisp
   (setq default-input-method "russian-computer")

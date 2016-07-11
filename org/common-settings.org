@@ -19,7 +19,8 @@
 ** Theme
 #+begin_src emacs-lisp
   ;; (load-theme 'monokai t)
-  (load-theme 'solarized-dark t)
+  ;; (load-theme 'solarized-dark t)
+  (load-theme 'solarized-light t)
 #+end_src
 
 ** mod-line
@@ -245,3 +246,36 @@ Setup env as so like emacs was started from a command line.
   (setf slime-lisp-implementations
         '((sbcl ("sbcl"))))
 #+end_src
+* Helm: The only way of doing things!
+#+begin_src emacs-lisp
+  (require 'helm-config)
+  (helm-mode 1)
+  (define-key global-map [remap find-file] 'helm-find-files)
+  (define-key global-map [remap occur] 'helm-occur)
+  (define-key global-map [remap list-buffers] 'helm-buffers-list)
+  (define-key global-map [remap dabbrev-expand] 'helm-dabbrev)
+  (global-set-key (kbd "M-x") 'helm-M-x)
+  (global-set-key (kbd "C-x b") 'helm-mini)
+  (global-set-key (kbd "M-y") 'helm-show-kill-ring)
+  (unless (boundp 'completion-in-region-function)
+    (define-key lisp-interaction-mode-map [remap completion-at-point] 'helm-lisp-completion-at-point)
+    (define-key emacs-lisp-mode-map       [remap completion-at-point] 'helm-lisp-completion-at-point))
+
+  (setq
+  ;; helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
+   helm-buffers-fuzzy-matching           t ; fuzzy matching buffer names when non--nil
+   helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
+   helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
+   helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
+   helm-ff-file-name-history-use-recentf t)
+#+end_src
+
+* Projectile (Navigete easelly inside project: .gin, .svn, ...)
+#+begin_src emacs-lisp
+  (setq projectile-enable-caching t)
+  (projectile-global-mode)
+  (setq projectile-completion-system 'helm)
+  (helm-projectile-on)
+  (setf projectile-use-git-grep t)
+#+end_src
+** TODO Whould it better to make this a child of a Helm entry?

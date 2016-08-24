@@ -2,7 +2,8 @@
 
 (defconst mapsme-c-style
   `("Google"
-    (c-offsets-alist . ((access-label . -)))))
+    (c-offsets-alist . ((access-label . -)
+                        (member-init-intro . +)))))
 
 (defun mapsme-set-c-style ()
   (interactive)

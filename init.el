@@ -15,6 +15,7 @@
                      ace-window
                      ace-jump-mode
                      exec-path-from-shell
+                     neotree
                      ))
 
 ;; Misc emacs scripts/funcitons

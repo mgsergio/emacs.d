@@ -39,6 +39,11 @@
   (column-number-mode)
 #+end_src
 
+** NeoTree
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-c n") 'neotree-toggle)
+  (setf neo-smart-open t)
+#+end_src
 * Disable stupid beeping
 #+begin_src emacs-lisp
   (setq ring-bell-function 'ignore)

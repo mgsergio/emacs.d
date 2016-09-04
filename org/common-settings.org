@@ -4,9 +4,16 @@
 #+end_src
 ** WriteRoomMode
 #+begin_src emacs-lisp
-  (setf writeroom-width 100)
-  (setf writeroom-mode-line t)
-  (global-set-key (kbd "C-c w") 'writeroom-mode)
+    (setf writeroom-width 100
+          writeroom-mode-line t
+          writeroom-major-modes '("c\\(\\+\\+\\)?-mode"
+                                  lisp-mode emacs-lisp-mode
+                                  text-mode python-mode org-mode
+                                  "js2-.*"
+                                  "magit-.*-mode")
+          writeroom-major-modes-exceptions '(magit-popup-mode magit-log-mode))
+    (global-writeroom-mode 1)
+    (global-set-key (kbd "C-c w") 'writeroom-mode)
 #+end_src
 ** Disable useless controls
 #+begin_src emacs-lisp

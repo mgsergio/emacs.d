@@ -153,9 +153,12 @@
    (global-set-key [s-down] 'windmove-down)
 #+end_src
 
-** Ace
+** TODO Ace
+  - [ ] Move ace to a separated item and set up keys for ace window.
 #+begin_src emacs-lisp
   (global-set-key (kbd "C-c j") 'ace-jump-mode)
+  ;; Override default C-x o behavior.
+  (global-set-key (kbd "C-x o") 'ace-window)
 #+end_src
 ** Useful key bindings
 #+begin_src emacs-lisp

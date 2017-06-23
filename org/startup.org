@@ -56,7 +56,8 @@
   (setq ring-bell-function 'ignore)
 #+end_src
 
-* Useful modes
+* TODO [0/1] Useful modes
+  - [ ] Make a separate entry for each mode.
 #+begin_src emacs-lisp
   (fullscreen-mode)
   (global-set-key (kbd "C-c f") 'fullscreen-mode-fullscreen-toggle)
@@ -125,7 +126,7 @@
 #+end_src
 
 * Bindings
-** Disabel C-x C-c
+** Disable C-x C-c
 #+begin_src emacs-lisp
   (global-unset-key (kbd "C-x C-c"))
 #+end_src
@@ -153,13 +154,6 @@
    (global-set-key [s-down] 'windmove-down)
 #+end_src
 
-** TODO Ace
-  - [ ] Move ace to a separated item and set up keys for ace window.
-#+begin_src emacs-lisp
-  (global-set-key (kbd "C-c j") 'ace-jump-mode)
-  ;; Override default C-x o behavior.
-  (global-set-key (kbd "C-x o") 'ace-window)
-#+end_src
 ** Useful key bindings
 #+begin_src emacs-lisp
   (global-set-key (kbd "<f5>") 'compile)
@@ -167,6 +161,17 @@
   (global-set-key (kbd "C-<f5>") 'tramp-cleanup-all-connections) ;; wake up after server came back
   (global-set-key (kbd "C-<f6>") 'tramp-cleanup-all-buffers) ;; and also kill all tramp buffers
   (global-set-key (kbd "C-c i b") 'ibuffer)
+#+end_src
+
+* Multiple Cursors
+#+begin_src emacs-lisp
+  (require 'multiple-cursors)
+
+  (global-set-key (kbd "C-;") 'mc/edit-lines)
+
+  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+  (global-set-key (kbd "C-c C->") 'mc/mark-all-like-this)
 #+end_src
 
 * Use long names instead of <N>s.
@@ -228,6 +233,39 @@
                          (generate-new-buffer users-buffer-name))))
 #+end_src
 *** TODO Make new buffer inherit projectile mode too
+** Rename both file and buffer
+#+begin_src emacs-lisp
+  (defun rename-this-buffer-and-file ()
+    "Renames current buffer and file it is visiting."
+    (interactive)
+    (let ((name (buffer-name))
+          (filename (buffer-file-name)))
+      (if (not (and filename (file-exists-p filename)))
+          (error "Buffer '%s' is not visiting a file!" name)
+        (let ((new-name (read-file-name "New name: " filename)))
+          (cond ((get-buffer new-name)
+                 (error "A buffer named '%s' already exists!" new-name))
+                (t
+                 (rename-file filename new-name 1)
+                 (set-visited-file-name new-name)
+                 (set-buffer-modified-p nil)
+                 (message "File '%s' successfully renamed to '%s'"
+                          name (file-name-nondirectory new-name))))))))
+
+
+  (defun rename-file-and-buffer ()
+    "Rename the current buffer and file it is visiting."
+    (interactive)
+    (let ((filename (buffer-file-name)))
+      (if (not (and filename (file-exists-p filename)))
+          (message "Buffer is not visiting a file!")
+        (let ((new-name (read-file-name "New name: " filename)))
+          (cond
+           ((vc-backend filename) (vc-rename-file filename new-name))
+           (t
+            (rename-file filename new-name t)
+            (set-visited-file-name new-name t t)))))))
+#+end_src
 * Unused
 ;; Setup cider, a repl mode for clojure, and more
 ;; (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
@@ -285,7 +323,8 @@ Setup env as so like emacs was started from a command line.
    helm-ff-file-name-history-use-recentf t)
 #+end_src
 
-* Projectile (Navigete easelly inside project: .gin, .svn, ...)
+* TODO [0/1] Projectile (Navigete easelly inside project: .gin, .svn, ...)
+  - [ ] Whould it better to make this a child of a Helm entry?
 #+begin_src emacs-lisp
   (setq projectile-enable-caching t)
   (projectile-global-mode)
@@ -293,4 +332,41 @@ Setup env as so like emacs was started from a command line.
   (helm-projectile-on)
   (setf projectile-use-git-grep t)
 #+end_src
-** TODO Whould it better to make this a child of a Helm entry?
+* Ace
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-c j") 'ace-jump-mode)
+  ;; Override default C-x o behavior.
+  (global-set-key (kbd "C-x o") 'ace-window)
+  (setf aw-dispatch-always nil)
+#+end_src
+* Customize Meta and Control Keys
+#+begin_src emacs-lisp
+  (when (eq system-type 'darwin)
+    (setq mac-option-modifier 'control)
+    (setq mac-command-modifier 'meta))
+#+end_src
+
+* org-mode
+** Bindings
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-c a") 'org-agenda)
+#+end_src
+** List of additional LaTeX packages
+#+begin_src emacs-lisp
+  (if (version< (org-version) "8")
+      (progn
+        (require 'org-latex)
+        (setq org-export-latex-listings t)
+        (add-to-list 'org-export-latex-packages-alist '("" "cmap" t))
+        (add-to-list 'org-export-latex-packages-alist '("english,russian" "babel" t)))
+    (progn
+      (require 'ox-latex)
+      (setq org-latex-listings t)
+      (add-to-list 'org-latex-packages-alist '("" "cmap" t))
+      (add-to-list 'org-latex-packages-alist '("english,russian" "babel"))))
+#+end_src
+** org-habit
+#+begin_src emacs-lisp
+  (add-to-list 'org-modules 'org-habit)
+  (require 'org-habit)
+#+end_src

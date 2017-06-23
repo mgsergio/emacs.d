@@ -1,6 +1,0 @@
-* Customize Meta and Control Keys
-#+begin_src emacs-lisp
-  (when (eq system-type 'darwin)
-    (setq mac-option-modifier 'control)
-    (setq mac-command-modifier 'meta))
-#+end_src

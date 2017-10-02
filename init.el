@@ -1,22 +1,24 @@
 (require 'package)
-(setq package-list '(helm
-                     helm-projectile
-                     monokai-theme
-                     solarized-theme
-                     auto-complete
-                     move-text
-                     multiple-cursors
-                     magit
-                     fullscreen-mode
-                     writeroom-mode
-                     haskell-mode
-                     js2-mode
-                     slime
-                     ace-window
-                     ace-jump-mode
-                     exec-path-from-shell
-                     neotree
-                     ))
+(setq package-selected-packages '(helm
+                                  helm-projectile
+                                  monokai-theme
+                                  solarized-theme
+                                  auto-complete
+                                  move-text
+                                  multiple-cursors
+                                  magit
+                                  fullscreen-mode
+                                  writeroom-mode
+                                  haskell-mode
+                                  js2-mode
+                                  slime
+                                  ace-window
+                                  ace-jump-mode
+                                  exec-path-from-shell
+                                  neotree
+                                  restclient
+                                  restclient-helm
+                                  clang-format))
 
 ;; Misc emacs scripts/funcitons
 (add-to-list 'load-path "~/.emacs.d/etc")
@@ -27,8 +29,8 @@
 ;; Add repos with lots of cool packages
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.milkbox.net/packages/") t)
-(add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/") t)
+;; (add-to-list 'package-archives
+;;              '("marmalade" . "http://marmalade-repo.org/packages/") t)
 
 (package-initialize) ; force all packages to load
 
@@ -37,9 +39,7 @@
   (package-refresh-contents))
 
 ;; install mising packages
-(dolist (package package-list)
-  (unless (package-installed-p package)
-    (package-install package)))
+(package-install-selected-packages)
 
 ;; Load setting from .org files in .emacs.d/org
 (require 'ob-tangle)

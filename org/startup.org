@@ -2,18 +2,20 @@
 #+begin_src emacs-lisp
   ;;(global-linum-mode)
 #+end_src
-** WriteRoomMode
+** COMMENT WriteRoomMode
 #+begin_src emacs-lisp
-    (setf writeroom-width 100
-          writeroom-mode-line t
-          writeroom-major-modes '("c\\(\\+\\+\\)?-mode"
-                                  lisp-mode emacs-lisp-mode
-                                  text-mode python-mode org-mode
-                                  "js2-.*"
-                                  "magit-.*-mode")
-          writeroom-major-modes-exceptions '(magit-popup-mode magit-log-mode))
-    (global-writeroom-mode 1)
-    (global-set-key (kbd "C-c w") 'writeroom-mode)
+  (setf writeroom-width 100
+        writeroom-mode-line t
+        writeroom-major-modes '("c\\(\\+\\+\\)?-mode"
+                                lisp-mode emacs-lisp-mode
+                                clojure-mode
+                                text-mode python-mode org-mode
+                                cmake-mode
+                                "js2-.*"
+                                "magit-.*-mode")
+        writeroom-major-modes-exceptions '(magit-popup-mode magit-log-mode))
+  (global-writeroom-mode 1)
+  (global-set-key (kbd "C-c w") 'writeroom-mode)
 #+end_src
 ** Disable useless controls
 #+begin_src emacs-lisp
@@ -259,22 +261,11 @@
             (rename-file filename new-name t)
             (set-visited-file-name new-name t t)))))))
 #+end_src
-* Unused
+* Cider
 ;; Setup cider, a repl mode for clojure, and more
 ;; (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
 ;; (setq nrepl-hide-special-buffers t) ;; hiding special buffers
-;; (etq cider-repl-tab-command 'indent-for-tab-command) ;; tab ke behaviour in repl
-
-** Speedbar
-;; Dear speedbar, please show me all files,
-;; not just those you know
-(custom-set-variables
- '(speedbar-show-unknown-files t))
-
-(defun my-sr-speedbar-toggle-and-select ()
-  (interactive)
-  (sr-speedbar-toggle)
-  (sr-speedbar-select-window))
+;; (etq cider-repl-tab-command 'indent-for-tab-command) ;; tab key behaviour in repl
 * Fix input echoing in python
 #+begin_src emacs-lisp
   (add-hook 'inferior-python-mode-hook
@@ -362,4 +353,16 @@ Setup env as so like emacs was started from a command line.
 #+begin_src emacs-lisp
   (add-to-list 'org-modules 'org-habit)
   (require 'org-habit)
+#+end_src
+* TODO Modal editing
+  - ryo
+  - modalka
+  - evil
+  - hydra
+* Other users' configs
+  https://github.com/mrkkrp/dot-emacs
+* Clang-Fomat
+#+begin_src emacs-lisp
+  (require 'clang-format)
+  (global-set-key [C-tab] 'clang-format-region)
 #+end_src

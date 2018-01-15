@@ -1,5 +1,5 @@
 (require 'package)
-(setq package-selected-packages '(helm
+(setf package-selected-packages '(helm
                                   helm-projectile
                                   monokai-theme
                                   solarized-theme
@@ -11,14 +11,18 @@
                                   writeroom-mode
                                   haskell-mode
                                   js2-mode
+                                  yaml-mode
+                                  cmake-mode
                                   slime
+                                  cider
                                   ace-window
                                   ace-jump-mode
                                   exec-path-from-shell
                                   neotree
                                   restclient
                                   restclient-helm
-                                  clang-format))
+                                  clang-format
+                                  vlf))
 
 ;; Misc emacs scripts/funcitons
 (add-to-list 'load-path "~/.emacs.d/etc")

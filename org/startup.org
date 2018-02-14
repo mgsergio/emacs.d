@@ -331,9 +331,16 @@ Setup env as so like emacs was started from a command line.
 #+end_src
 
 * org-mode
+** Variables
+#+begin_src emacs-lisp
+  (setq org-default-notes-file (concat org-directory "/notes.org"))
+#+end_src
 ** Bindings
 #+begin_src emacs-lisp
   (global-set-key (kbd "C-c a") 'org-agenda)
+  (global-set-key (kbd "C-c c") 'org-capture)
+  ;(global-set-key (kdb "C-c l") 'org-store-link)
+  ;(global-set-key (kdb "C-c b") 'org-iswitchb)
 #+end_src
 ** List of additional LaTeX packages
 #+begin_src emacs-lisp

@@ -22,7 +22,8 @@
                                   restclient
                                   restclient-helm
                                   clang-format
-                                  vlf))
+                                  vlf
+                                  ess))
 
 ;; Misc emacs scripts/funcitons
 (add-to-list 'load-path "~/.emacs.d/etc")

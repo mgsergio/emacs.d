@@ -1,4 +1,4 @@
-* Appearence
+* Look and Feel
 #+begin_src emacs-lisp
   ;;(global-linum-mode)
 #+end_src
@@ -52,6 +52,10 @@
 #+begin_src emacs-lisp
   (global-set-key (kbd "C-c n") 'neotree-toggle)
   (setf neo-smart-open t)
+#+end_src
+** Display time
+#+begin_src emacs-lisp
+  (display-time-mode t)
 #+end_src
 * Disable stupid beeping
 #+begin_src emacs-lisp
@@ -368,6 +372,7 @@ Setup env as so like emacs was started from a command line.
   - hydra
 * Other users' configs
   https://github.com/mrkkrp/dot-emacs
+  http://pages.sachachua.com/.emacs.d/Sacha.html#org0477c97
 * Clang-Fomat
 #+begin_src emacs-lisp
   (require 'clang-format)

@@ -2,7 +2,7 @@
 #+begin_src emacs-lisp
   ;;(global-linum-mode)
 #+end_src
-** COMMENT WriteRoomMode
+**  WriteRoomMode
 #+begin_src emacs-lisp
   (setf writeroom-width 100
         writeroom-mode-line t
@@ -56,6 +56,11 @@
 ** Display time
 #+begin_src emacs-lisp
   (display-time-mode t)
+#+end_src
+** Zoom
+#+begin_src emacs-lisp
+  (zoom-mode t)
+  (setf zoom-size '(0.618 . 0.618))
 #+end_src
 * Disable stupid beeping
 #+begin_src emacs-lisp

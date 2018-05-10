@@ -62,6 +62,10 @@
   (zoom-mode t)
   (setf zoom-size '(0.618 . 0.618))
 #+end_src
+** Rainbow-delimiters
+#+begin_src emacs-lisp
+  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+#+end_src
 * Disable stupid beeping
 #+begin_src emacs-lisp
   (setq ring-bell-function 'ignore)

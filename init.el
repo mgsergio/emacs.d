@@ -5,6 +5,7 @@
                                   solarized-theme
                                   auto-complete
                                   move-text
+                                  rainbow-delimiters
                                   multiple-cursors
                                   magit
                                   fullscreen-mode

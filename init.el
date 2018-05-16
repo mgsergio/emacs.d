@@ -8,6 +8,7 @@
                                   rainbow-delimiters
                                   multiple-cursors
                                   magit
+                                  dockerfile-mode
                                   fullscreen-mode
                                   writeroom-mode
                                   haskell-mode

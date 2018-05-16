@@ -62,10 +62,15 @@
   (zoom-mode t)
   (setf zoom-size '(0.618 . 0.618))
 #+end_src
+** Highlight matching paren
+#+begin_src emacs-lisp
+  (show-paren-mode 1)
+#+end_src
 ** Rainbow-delimiters
 #+begin_src emacs-lisp
   (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 #+end_src
+* TODO Make a separate entry for interface things like neo-tree and shell-pop
 * Disable stupid beeping
 #+begin_src emacs-lisp
   (setq ring-bell-function 'ignore)
@@ -112,11 +117,6 @@
 #+begin_src emacs-lisp
   (setq tab-stop-list (number-sequence 4 200 4))
   (setq-default indent-tabs-mode nil)
-#+end_src
-
-* Highlight matching paren
-#+begin_src emacs-lisp
-  (show-paren-mode 1)
 #+end_src
 
 * Remove trailing whitespaces before save.

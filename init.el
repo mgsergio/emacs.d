@@ -1,75 +1,87 @@
-(require 'package)
-(setf package-selected-packages '(helm
-                                  helm-projectile
-                                  monokai-theme
-                                  solarized-theme
-                                  auto-complete
-                                  move-text
-                                  rainbow-delimiters
-                                  multiple-cursors
-                                  magit
-                                  dockerfile-mode
-                                  fullscreen-mode
-                                  writeroom-mode
-                                  haskell-mode
-                                  js2-mode
-                                  yaml-mode
-                                  cmake-mode
-                                  slime
-                                  cider
-                                  ace-window
-                                  ace-jump-mode
-                                  exec-path-from-shell
-                                  neotree
-                                  restclient
-                                  restclient-helm
-                                  clang-format
-                                  vlf
-                                  ess
-                                  rg
-                                  zoom))
+;; hydra
+;; general?
+;; ace-jump
+;; ace-window
+;; neo-tree or alike and better
+;; perspectives/worspaces
+;; discover.or similar
 
-;; Misc emacs scripts/funcitons
-(add-to-list 'load-path "~/.emacs.d/etc")
-
-;; Custom styles
-(add-to-list 'load-path "~/.emacs.d/styles")
-
-;; Add repos with lots of cool packages
+(package-initialize)
 (add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/") t)
-;; (add-to-list 'package-archives
-;;              '("marmalade" . "http://marmalade-repo.org/packages/") t)
+	     ;; many packages won't show if using stable
+	     ;; '("melpa" . "http://stable.melpa.org/packages/")
+	     '("melpa" . "http://melpa.milkbox.net/packages/")
+	     t)
 
-(package-initialize) ; force all packages to load
+;; keep the installed packages in .emacs.d
+(setq package-user-dir
+      (expand-file-name "elpa" user-emacs-directory))
+(package-refresh-contents)
 
-;; fetch the list of packages available
-(unless package-archive-contents
-  (package-refresh-contents))
+(package-install 'use-package)
 
-;; install mising packages
-(package-install-selected-packages)
+;; evil-magit
+(use-package evil
+  :ensure t
+  :config (evil-mode t))
 
-;; Load setting from .org files in .emacs.d/org
-(require 'ob-tangle)
-(let ((org-files-directory (expand-file-name "org" user-emacs-directory)))
-  (mapc #'org-babel-load-file
-        (directory-files org-files-directory t "\\.org$")))
+(use-package projectile
+  :ensure t
+  :config (projectile-mode t))
 
-;; Start emacs server unless we have one
-(add-hook 'after-init-hook
-          (lambda ()
-            (require 'server)
-            (unless (server-running-p)
-              (server-start))))
+(use-package ivy
+  :ensure t
+  :config (ivy-mode t))
 
-;; Play with semantic
-(setf semanticdb-project-roots '("/Users/mgsergio/omim"))
-(setf semantic-default-submodes '(global-semanticdb-minor-mode
-                                  global-semantic-idle-scheduler-mode
-                                  global-semantic-stickyfunc-mode))
-(semantic-mode 1)
+(use-package counsel
+  :ensure t
+  :config (counsel-mode t))
 
-;; Store customs outside init.el
-(setf custom-file "~/.emacs.d/custom-set-variables.el")
-(load custom-file :NOERROR)
+(use-package magit
+  :ensure t)
+
+(use-package which-key
+  :ensure t
+  :config (which-key-mode t))
+
+(use-package smex
+  :ensure t)
+
+;; Themes
+(package-install 'monokai-theme)
+(load-theme 'monokai t)
+
+;; Some defaults.
+;; TODO: Check them out.
+(setq delete-old-versions -1)		; delete excess backup versions silently
+(setq version-control t)		; use version control
+(setq vc-make-backup-files t)		; make backups file even when in version controlled dir
+(setq backup-directory-alist `(("." . "~/.emacs.d/backups"))) ; which directory to put backups file
+(setq vc-follow-symlinks t)				       ; don't ask for confirmation when opening symlinked file
+(setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t))) ;transform backups file name
+(setq inhibit-startup-screen t)	; inhibit useless and old-school startup screen
+(setq ring-bell-function 'ignore)	; silent bell when you make a mistake
+(setq coding-system-for-read 'utf-8)	; use utf-8 by default
+(setq coding-system-for-write 'utf-8)
+(setq sentence-end-double-space nil)	; sentence SHOULD end with only a point.
+(setq default-fill-column 80)		; toggle wrapping text at the 80th character
+(setq initial-scratch-message "Welcome in Emacs") ; print a default message in the empty scratch buffer opened at startup
+
+;; Disable tool-bar
+(tool-bar-mode -1)
+
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (monokai-theme monokai-them smex which-key magit projectile evil use-package))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

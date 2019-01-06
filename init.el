@@ -1,5 +1,4 @@
 ;; hydra
-;; general?
 ;; ace-jump
 ;; ace-window
 ;; neo-tree or alike and better
@@ -16,56 +15,125 @@
 ;; keep the installed packages in .emacs.d
 (setq package-user-dir
       (expand-file-name "elpa" user-emacs-directory))
-(package-refresh-contents)
+(when (not package-archive-contents)
+  (package-refresh-contents))
 
 (package-install 'use-package)
 
-;; evil-magit
+;; TODO: Make it rebember last buffer for each window.
+(defun srj/last-opened-buffer ()
+  "Cycles between cvurrent buffer and the prevous visited one"
+  (interactive)
+  (switch-to-buffer
+   (other-buffer (current-buffer) t)
+   nil t))
+
+(use-package general
+  :ensure t)
+
 (use-package evil
   :ensure t
   :config (evil-mode t))
 
+(use-package evil-escape
+  :ensure t
+  :config
+  (setq-default evil-escape-key-sequence "fd")
+  (evil-escape-mode t))
+
+;; Unset space in motion mode to avoid conflict.
+(general-def evil-motion-state-map "SPC" nil)
+(general-def 'motion Info-mode-map "SPC" nil)
+(general-def Info-mode-map "SPC" nil)
+
+(general-define-key
+ :states '(normal motion)
+ :prefix "SPC"
+ ;; "ff" 'find-file
+ "fs" 'save-buffer
+ ;; "ss" 'swiper
+ ;; TODO: Should be in visual as well.
+ ;; "SPC" 'counsel-M-x
+ "TAB" 'srj/last-opened-buffer
+ ;; "bb" 'counsel-ibuffer
+ "bd" 'kill-this-buffer
+ "bD" 'kill-buffer
+
+ "hdv" 'describe-variable
+ "hdf" 'describe-function
+ "hdv" 'describe-variable
+ "hdk" 'describe-key
+ "hi" 'info
+ )
+
 (use-package projectile
   :ensure t
+  :general
+  (:prefix "SPC"
+   :states '(normal motion)
+   :keymaps 'projectile-mode-map
+   "p" projectile-command-map)
   :config (projectile-mode t))
 
-(use-package ivy
+(use-package helm
   :ensure t
-  :config (ivy-mode t))
+  :general
+  (:prefix "SPC"
+   :states '(normal motion visual)
+   "SPC" 'helm-M-x
+   "ff" 'helm-find-files
+   "bb" 'helm-mini
+   )
+  :config (helm-mode t))
 
-(use-package counsel
+(use-package helm-projectile
   :ensure t
-  :config (counsel-mode t))
+  :config
+  (helm-projectile-on))
 
 (use-package magit
-  :ensure t)
-
-(use-package which-key
   :ensure t
-  :config (which-key-mode t))
+  :general
+  (:prefix "SPC"
+   :states '(normal motion)
+   "gs" 'magit-status))
 
-(use-package smex
-  :ensure t)
+;; TODO:
+;; (use-package which-key
+;;   :ensure t
+;;   :config (which-key-mode t))
 
 ;; Themes
 (package-install 'monokai-theme)
 (load-theme 'monokai t)
 
 ;; Some defaults.
-;; TODO: Check them out.
-(setq delete-old-versions -1)		; delete excess backup versions silently
-(setq version-control t)		; use version control
-(setq vc-make-backup-files t)		; make backups file even when in version controlled dir
-(setq backup-directory-alist `(("." . "~/.emacs.d/backups"))) ; which directory to put backups file
-(setq vc-follow-symlinks t)				       ; don't ask for confirmation when opening symlinked file
-(setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t))) ;transform backups file name
-(setq inhibit-startup-screen t)	; inhibit useless and old-school startup screen
-(setq ring-bell-function 'ignore)	; silent bell when you make a mistake
-(setq coding-system-for-read 'utf-8)	; use utf-8 by default
-(setq coding-system-for-write 'utf-8)
-(setq sentence-end-double-space nil)	; sentence SHOULD end with only a point.
-(setq default-fill-column 80)		; toggle wrapping text at the 80th character
-(setq initial-scratch-message "Welcome in Emacs") ; print a default message in the empty scratch buffer opened at startup
+(setq
+ ;; delete excess backup versions silently
+ delete-old-versions t
+ backup-directory-alist `(("." . "~/.emacs.d/backups"))
+ auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t))
+
+ version-control t
+ vc-follow-symlinks t
+ vc-make-backup-files t
+
+ ;; use utf-8 by default
+ coding-system-for-read 'utf-8
+ coding-system-for-write 'utf-8
+
+ ;; sentence SHOULD end with only a point.
+ sentence-end-double-space nil
+
+ ;; toggle wrapping text at the 80th character
+ default-fill-column 80
+
+ ;; print a default message in the empty scratch buffer opened at startup
+ initial-scratch-message "Welcome in Emacs"
+ ;; silent bell when you make a mistake
+ ring-bell-function 'ignore
+ inhibit-startup-screen t
+ )
 
 ;; Disable tool-bar
 (tool-bar-mode -1)
@@ -78,7 +146,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (monokai-theme monokai-them smex which-key magit projectile evil use-package))))
+    (helm-projectile helm evil-escape monokai-theme monokai-them smex which-key magit projectile evil use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

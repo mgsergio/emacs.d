@@ -1,9 +1,20 @@
+;; TODO:
 ;; hydra
 ;; ace-jump
 ;; ace-window
+;; and better windo management in general
 ;; neo-tree or alike and better
 ;; perspectives/worspaces
-;; discover.or similar
+;; discover or similar
+;; which-key
+;; python + completion and staff
+;; docker
+;; shell env (load .bashrc in emacs shell mode)
+;;
+;; Maybe switch to ivi instead of helm? ...
+;;
+;; Check this out.
+;; https://dev.to/huytd/emacs-from-scratch-1cg6
 
 (package-initialize)
 (add-to-list 'package-archives
@@ -46,7 +57,7 @@
 (general-def 'motion Info-mode-map "SPC" nil)
 (general-def Info-mode-map "SPC" nil)
 
-(general-define-key
+(general-def
  :states '(normal motion)
  :prefix "SPC"
  ;; "ff" 'find-file
@@ -58,6 +69,7 @@
  ;; "bb" 'counsel-ibuffer
  "bd" 'kill-this-buffer
  "bD" 'kill-buffer
+ "bR" 'revert-buffer
 
  "hdv" 'describe-variable
  "hdf" 'describe-function
@@ -65,6 +77,12 @@
  "hdk" 'describe-key
  "hi" 'info
  )
+
+
+;; Indent with tab in normal mode.
+;; TODO: Is there a better way? I.e. Override motion definition with normal one.
+(general-def :states 'motion "TAB" nil)
+(general-def :states 'normal "TAB" 'indent-for-tab-command)
 
 (use-package projectile
   :ensure t
@@ -86,6 +104,13 @@
    )
   :config (helm-mode t))
 
+(use-package helm-swoop
+  :ensure t
+  :general
+  (:prefix "SPC"
+   :states '(normal motion visual)
+   "ss" 'helm-swoop))
+
 (use-package helm-projectile
   :ensure t
   :config
@@ -98,10 +123,39 @@
    :states '(normal motion)
    "gs" 'magit-status))
 
+(use-package smart-comment
+  :ensure t
+  :general
+  (:prefix "SPC"
+   :states '(normal motion visual)
+   "; ;" 'smart-comment))
+
 ;; TODO:
 ;; (use-package which-key
 ;;   :ensure t
 ;;   :config (which-key-mode t))
+
+(use-package zoom
+  :ensure t
+  :config
+  (setq zoom-size '(0.618 . 0.618))
+  (zoom-mode t))
+
+(use-package centered-window
+  :ensure t
+  :general
+  (:prefix "SPC"
+   :states '(normal motion)
+   "wc" 'centered-window-mode)
+  :config
+  (setq cwm-left-fringe-ratio 50)
+  (centered-window-mode t))
+
+;; Languages
+(use-package go-mode
+  :commands go-mode
+  :ensure t)
+
 
 ;; Themes
 (package-install 'monokai-theme)
@@ -138,7 +192,10 @@
 ;; Disable tool-bar
 (tool-bar-mode -1)
 
+(defalias 'yes-or-no-p 'y-or-n-p)
 
+;; Customs.
+;; TODO: Move this shit out of init.el
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

@@ -109,7 +109,8 @@
   :general
   (:prefix "SPC"
    :states '(normal motion visual)
-   "ss" 'helm-swoop))
+   "ss" 'helm-swoop-without-pre-input
+   "sS" 'helm-swoop))
 
 (use-package helm-projectile
   :ensure t
@@ -153,9 +154,22 @@
 
 ;; Languages
 (use-package go-mode
-  :commands go-mode
+  :ensure t
+  :commands go-mode)
+
+(use-package yaml-mode
+  :ensure t
+  :commands yaml-mode
+  :mode "\\.ya?ml\\'"
+  :config
+  (general-def yaml-mode-map "\C-m" 'newline-and-indent))
+
+(use-package terraform-mode
+  :commands terraform-mode
   :ensure t)
 
+;; Prevent python repl from echoing input.
+(add-hook 'inferior-python-mode-hook (lambda () (setq comint-process-echoes t)))
 
 ;; Themes
 (package-install 'monokai-theme)
@@ -193,6 +207,11 @@
 (tool-bar-mode -1)
 
 (defalias 'yes-or-no-p 'y-or-n-p)
+(add-hook 'before-save-hook 'whitespace-cleanup)
+
+
+
+
 
 ;; Customs.
 ;; TODO: Move this shit out of init.el

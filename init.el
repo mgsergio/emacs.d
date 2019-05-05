@@ -44,6 +44,7 @@
 (add-to-list 'load-path "~/.emacs.d/lisp/tom")
 (require 'tom-mode)
 
+(tom-global-mode)
 
 ;; TODO: Make it rebember last buffer for each window.
 (defun srj/last-opened-buffer ()

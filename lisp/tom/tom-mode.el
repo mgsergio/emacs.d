@@ -4,6 +4,7 @@
 (require 'cl-lib)
 (require 'dash)
 
+(require 'tom-keys)
 (require 'tom-text)
 
 ;; This is a reference of some commands tha should be rebind
@@ -33,95 +34,6 @@
 ;; (defvar tom--ivi-control-function
 ;;   (:M-x
 
-(defun tom--define-keys (m &rest defs)
-  (when  (-> defs length cl-oddp)
-    (error "defs should be a full alist."))
-  (cl-flet ((vectorize (seq)
-		       (if (stringp seq)
-			   (kbd seq)
-			 seq)))
-    (cl-loop for (seq def) on defs
-	     by 'cddr
-	     do (define-key m (vectorize seq) def))))
-
-
-(defun tom--populate-motion-map (m)
-  (tom--define-keys m
-		    "e" 'previous-line
-		    "E" (lambda ()
-			  (interactive)
-			  (previous-line 7))
-		    "d" 'next-line
-		    "D" (lambda ()
-			  (interactive)
-			  (next-line 7))
-
-		    "s" 'backward-word
-		    "f" 'forward-word
-		    "S" 'backward-char
-		    "F" 'forward-char
-
-		    "w" 'beginning-of-line-text
-		    "W" 'beginning-of-line
-		    "r" 'end-of-line
-
-		    "/" 're-search-forward
-		    "?" 're-search-backward
-
-		    ;; TODO: Make it smakrt...
-		    "m" 'set-mark-command))
-
-(defun tom--populate-text-manipulation-map (m)
-  (tom--define-keys m
-		    ;; TODO "k t *" -- kill `thing'
-		    ;; TODO "y t *" -- yank `thing'
-		    "k k" 'tom-kill-line-full
-		    "k f" 'tom-kill-word-forward
-		    "k s" 'tom-kill-word-backward
-		    "k r" 'tom-kill-line-forward
-		    "k w" 'tom-kill-line-backward
-
-		    "y y" 'tom-yank-line-full
-		    "y f" 'tom-yank-word-forward
-		    "y s" 'tom-yank-word-backward
-		    "y r" 'tom-yank-line-forward
-		    "y w" 'tom-yank-line-backward
-
-		    "I e" 'tom-insert-line-above-and-insert-state
-		    "I d" 'tom-insert-line-below-and-insert-state
-
-		    "l e" 'tom-insert-newline-above
-		    "l d" 'tom-insert-newline-below
-
-		    "p" 'yank
-		    "x" 'kill-region
-		    ))
-
-(defun tom--populate-control-map (m)
-  (tom--define-keys m
-		    "SPC SPC" 'helm-M-x
-		    "SPC f f" 'helm-find-files
-		    "SPC f s" 'save-buffer
-		    "SPC b b" 'helm-mini
-		    "SPC b B" 'ibuffer
-
-		    "SPC p p" 'projectile-switch-project
-		    "SPC p f" 'projectile-find-file
-
-		    "i w" (lambda ()
-			    (interactive)
-			    (beginning-of-line-text)
-			    (tom-mode -1))
-		    "i W" (lambda ()
-			    (interactive)
-			    (beginning-of-line)
-			    (tom-mode -1))
-		    "i r" (lambda ()
-			    (interactive)
-			    (end-of-line)
-			    (tom-mode -1))
-		    "i i" 'tom-mode
-		    "0" 'tom-mode))
 
 (defvar tom-keymap)
 (let ((m (make-keymap)))
@@ -131,13 +43,55 @@
   (tom--populate-text-manipulation-map m)
   (setf tom-keymap m))
 
-(global-set-key (kbd "C-]") 'tom-mode)
+;; TODO: Should be normal mode or smth.
+(defun tom--init ()
+  (setf cursor-type 'box))
+
+;; TODO: Should be insert mode or smth.
+(defun tom--deinit ()
+  (setf cursor-type 'bar))
 
 (define-minor-mode tom-mode
   "A minor mode for modal editing"
   :init-value nil
-  ;; TODO(mgserjio): thing on it again.
+  ;; TODO(mgserjio): Think on it again.
   :lighter "TOM"
-  :keymap tom-keymap)
+  :keymap tom-keymap
+  (if tom-mode
+      (tom--init)
+    (tom--deinit)))
+
+;; TODO: use defcustom instead.
+(defvar tom-major-mode-white-list nil)
+(defvar tom-buffer-name-white-list nil)
+
+(defvar tom-major-mode-black-list (list "^helm.*" "^magit.*"))
+(defvar tom-buffer-name-black-list (list "\*Minibuf-\d+\*"))
+
+(defun tom--check-white-lists ()
+  (or (cl-member-if (lambda (x) (string-match-p x (symbol-name major-mode)))
+		     tom-major-mode-white-list)
+      (cl-member-if (lambda (x) (string-match-p x (buffer-name)))
+		    tom-buffer-name-white-list)))
+
+(defun tom--check-black-lists ()
+  (not (or (cl-member-if (lambda (x) (string-match-p x (symbol-name major-mode)))
+			 tom-major-mode-black-list)
+	   (cl-member-if (lambda (x) (string-match-p x (buffer-name)))
+			 tom-buffer-name-black-list))))
+
+(defun tom--check-buffer ()
+  (if (or tom-major-mode-white-list
+	  tom-buffer-name-white-list)
+      (tom--check-wite-lists)
+    (tom--check-black-lists)))
+
+(defun turn-on-tom-mode ()
+  (when (tom--check-buffer)
+    (tom-mode 1)))
+
+(define-globalized-minor-mode tom-global-mode
+  tom-mode
+  turn-on-tom-mode)
 
 (provide 'tom-mode)

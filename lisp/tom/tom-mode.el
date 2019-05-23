@@ -34,32 +34,54 @@
 ;; (defvar tom--ivi-control-function
 ;;   (:M-x
 
-
-(defvar tom-keymap)
+(defvar tom-normal-state-map)
 (let ((m (make-keymap)))
   (suppress-keymap m)
   (tom--populate-motion-map m)
   (tom--populate-control-map m)
   (tom--populate-text-manipulation-map m)
-  (setf tom-keymap m))
+  (setf tom-normal-state-map m))
 
-;; TODO: Should be normal mode or smth.
-(defun tom--init ()
-  (setf cursor-type 'box))
+(defvar tom-select-state-map nil)
+(defvar tom-line-select-state-map nil)
+
+(defvar tom-insert-state nil)
+(defvar tom-select-sate nil)
+(defvar tom-line-select-state nil)
+(defvar tom-normal-state nil)
+
+;; Order metters.
+(defvar tom--map-alist
+  `(;; (tom-insert-state . tom-insert-state-map)
+    (tom-select-state . ,tom-select-state-map)
+    (tom-line-select-stste . ,tom-line-select-state-map)
+    (tom-normal-state . ,tom-normal-state-map)))
+
+(defun tom--enter-normal-state ()
+  (setf cursor-type 'box)
+  (setf tom-normal-state t))
 
 ;; TODO: Should be insert mode or smth.
-(defun tom--deinit ()
+(defun tom--leave-normal-state ()
   (setf cursor-type 'bar))
+
+;; (if (not cua-mode)
+;;     (setq emulation-mode-map-alists
+;;	  (delq 'cua--keymap-alist emulation-mode-map-alists))
+;;   (add-to-ordered-list 'emulation-mode-map-alists 'cua--keymap-alist 400)
+;;   (cua--select-keymaps))
 
 (define-minor-mode tom-mode
   "A minor mode for modal editing"
   :init-value nil
   ;; TODO(mgserjio): Think on it again.
   :lighter "TOM"
-  :keymap tom-keymap
   (if tom-mode
-      (tom--init)
-    (tom--deinit)))
+      (progn
+	(add-to-list 'emulation-mode-map-alists 'tom--map-alist)
+	(tom--enter-normal-state))
+    (delq 'tom--map-alist emulation-mode-map-alists)
+    (tom--leave-normal-state)))
 
 ;; TODO: use defcustom instead.
 (defvar tom-major-mode-white-list nil)

@@ -1,0 +1,6 @@
+/transient/
+/elpa/
+/projectile-bookmarks.eld
+
+# I don't `customize' interface.
+/custom.el

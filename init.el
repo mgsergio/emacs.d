@@ -36,7 +36,6 @@
 ;; TODO: here and in mue.el trim trailing whitespaes!
 
 ;; Wanted packages:
-;; magit
 ;; helm/swiper
 ;; lsp
 ;; multiple-cursors
@@ -79,6 +78,10 @@
          ("C-x b" . 'ivy-switch-buffer)
          ("C-c f j" . 'counsel-file-jump)))
 
+;; C-c j g g   git grep
+;; C-c j r g . rg
+;; C-c j a g . ag
+
 (use-package keyfreq
   :config
   (keyfreq-mode 1)
@@ -106,7 +109,11 @@
   ;; This allows VC to load vc-fossil when needed.
   :init (add-to-list 'vc-handled-backends 'Fossil t))
 
-(use-package magit)
+(use-package magit
+  :config
+  (with-eval-after-load 'project
+    ;; Make [m] magit available when switching projects.
+    (require 'magit-extras)))
 
 
 ;; TODO: try (use-package eglot)
@@ -129,6 +136,12 @@
   :init
   (setf evil-split-window-below t
 	evil-vsplit-window-right t
-	evil-want-C-u-scroll t)
+	evil-want-C-u-scroll t
+	evil-want-keybinding nil)
   :config
   (evil-mode 1))
+
+(use-package evil-collection
+  :after evil
+  :config
+  (evil-collection-init))

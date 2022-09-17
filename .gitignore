@@ -1,0 +1,12 @@
+*~
+.DS_Store
+.lsp-session*
+.cache
+elpa
+projects
+smex-items
+url
+games
+transient
+.fslckout
+.fossil-settings/

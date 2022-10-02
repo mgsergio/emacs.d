@@ -56,8 +56,17 @@
 (require 'use-package-ensure)
 (setf use-package-always-ensure t)
 
+(use-package flycheck
+  :init (global-flycheck-mode))
+
 (use-package typescript-mode
   :mode "\\.tsx?\\'")
+
+(use-package python-isort
+  :hook (python-mode . python-isort-on-save-mode))
+(use-package blacken
+  :hook (python-mode . blacken-mode))
+;; (add-hook python-mode-hook #'flycheck-mode))
 
 (use-package which-key
   :config (which-key-mode))
@@ -91,6 +100,7 @@
 (use-package zoom
   :config (zoom-mode 1))
 (use-package writeroom-mode
+  :init (global-writeroom-mode)
   :config
   (setf writeroom-width 120
         writeroom-mode-line t
@@ -117,10 +127,13 @@
 
 
 ;; TODO: try (use-package eglot)
+;; TODO: lsp-mode overrides flycheck checkers by default so no next checker is set
+;;       after ls. Wich is kinda annoying for python for instance.
 (use-package lsp-mode
   :init
   (setf lsp-keymap-prefix "C-c l")
   :hook (((typescript-mode js-mode) . lsp-deferred)
+	 ;; (python-mode . lsp-deferred)
          ;; which-key integration
          (lsp-mode . lsp-enable-which-key-integration))
   :commands (lsp lsp-deferred))

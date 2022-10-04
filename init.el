@@ -6,13 +6,14 @@
 
 (setf help-window-select t)
 
-(scroll-bar-mode -1)
-(tool-bar-mode -1)
+(if (display-graphic-p)
+    (progn
+      (scroll-bar-mode -1)
+      (tool-bar-mode -1)
+      (set-fringe-mode 15)))
 (menu-bar-mode -1)
 (global-hl-line-mode 1)
 
-
-(set-fringe-mode 15)
 
 (setf custom-file "~/.emacs.d/custom.el")
 (load custom-file)

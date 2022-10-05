@@ -141,9 +141,13 @@
 (use-package lsp-ui)
 (use-package lsp-ivy)
 
-
-(use-package solarized-theme
-  :config (load-theme 'solarized-selenized-dark t))
+(use-package solarized-theme)
+;; (use-package nord-theme)
+(add-hook 'after-init-hook
+	  (lambda ()
+	    (load-theme (if (display-graphic-p)
+			    'solarized-selenized-dark
+			  'solarized-gruvbox-dark))))
 
 
 (use-package evil

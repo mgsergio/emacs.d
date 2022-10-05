@@ -27,7 +27,8 @@
              "/opt/homebrew/share/emacs/site-lisp/maxima" t)
 
 (package-initialize)
-(package-install 'use-package)
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 

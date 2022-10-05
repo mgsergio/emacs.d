@@ -39,21 +39,16 @@
 
 ;; Wanted packages:
 ;; helm/swiper
-;; lsp
 ;; multiple-cursors
-;; python
 ;; mode-line?
 ;; window-management
 ;; hydra?
 ;; grow/shrink regions?
 ;; tree-sitter
-;; procjectile (try with built-in first)
-;; fossil :)
 ;; ace-jump ace-* ?
 ;; smartparent
 ;; expand-region
 ;; copany-mode
-;; flycheck
 
 (require 'use-package-ensure)
 (setf use-package-always-ensure t)

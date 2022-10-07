@@ -37,7 +37,8 @@
 ;; TODO: (desktop-save-mode 1)
 ;; TODO: here and in mue.el trim trailing whitespaes!
 
-;; Wanted packages:
+;; Wanted packages/features:
+;; Rename both file and buffer
 ;; helm/swiper
 ;; multiple-cursors
 ;; mode-line?
@@ -84,9 +85,50 @@
          ("C-x b" . 'ivy-switch-buffer)
          ("C-c f j" . 'counsel-file-jump)))
 
-;; C-c j g g   git grep
-;; C-c j r g . rg
-;; C-c j a g . ag
+;; (defvar custom-keymap make-sparse-keymap)
+
+;; --------
+;; Search:
+;;  <prefix> j g . git grep
+;;  <prefix> j r . rg
+;;  <prefix> j a . ag
+;;  counsel-ack
+;;  occur
+;;  multi-occur
+;;
+;; --------
+;; Toggle:
+;;  writeroom
+;;  flycheck
+;;  zoom
+;;  evil
+;;  whitespace
+;;  lsp/eglot?
+;;  TreeMacs
+;;
+;; --------
+;; Moving
+;;  paragraphs
+;;  s-exp
+;;  functions
+;;
+;; --------
+;; Jumps
+;;  definition
+;;  search for a symbol by name
+;;  bookmark?
+;;
+;; --------
+;; C-` Jump to terminal and back to the buffer (create term if not exists)
+;;
+;; --------
+;; etc:
+;;  ivy-resume
+;;
+;; --------
+;; lsp bindings
+
+
 
 (use-package keyfreq
   :config

@@ -1,8 +1,9 @@
 (setf inhibit-startup-screen t
       ring-bell-function 'ignore
       visible-bell nil
-      make-backup-files nil
-      indent-tabs-mode nil)
+      make-backup-files nil)
+
+(set-default 'indent-tabs-mode nil)
 
 (setf help-window-select t)
 

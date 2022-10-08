@@ -1,8 +1,9 @@
 (setf inhibit-startup-screen t
       ring-bell-function 'ignore
       visible-bell nil
-      make-backup-files nil
-      indent-tabs-mode nil)
+      make-backup-files nil)
+
+(set-default 'indent-tabs-mode nil)
 
 (setf help-window-select t)
 
@@ -172,7 +173,7 @@
   :init
   (setf lsp-keymap-prefix "C-c l")
   :hook (((typescript-mode js-mode) . lsp-deferred)
-	 ;; (python-mode . lsp-deferred)
+         ;; (python-mode . lsp-deferred)
          ;; which-key integration
          (lsp-mode . lsp-enable-which-key-integration))
   :commands (lsp lsp-deferred))
@@ -182,18 +183,18 @@
 (use-package solarized-theme)
 ;; (use-package nord-theme)
 (add-hook 'after-init-hook
-	  (lambda ()
-	    (load-theme (if (display-graphic-p)
-			    'solarized-selenized-dark
-			  'solarized-gruvbox-dark))))
+          (lambda ()
+            (load-theme (if (display-graphic-p)
+                            'solarized-selenized-dark
+                          'solarized-gruvbox-dark))))
 
 
 (use-package evil
   :init
   (setf evil-split-window-below t
-	evil-vsplit-window-right t
-	evil-want-C-u-scroll t
-	evil-want-keybinding nil)
+        evil-vsplit-window-right t
+        evil-want-C-u-scroll t
+        evil-want-keybinding nil)
   :config
   (evil-mode 1))
 

@@ -86,7 +86,22 @@
          ("C-x b" . 'ivy-switch-buffer)
          ("C-c f j" . 'counsel-file-jump)))
 
-;; (defvar custom-keymap make-sparse-keymap)
+
+(defvar custom-keymap (make-sparse-keymap))
+(require 'bind-key) ;; bind-key is a part of use-package.
+
+(bind-keys :map custom-keymap
+           ("s a" . counsel-ag)
+           ("s r" . counsel-rg)
+           ("t w" . writeroom-mode)
+           ("t W" . whitespace-mode)
+           ("t c" . flycheck-mode)
+           ("t z" . zoom-mode)
+           ("M-r" . ivy-resume)
+           ("s-r" . ivy-resume))
+
+(bind-key "s-p" custom-keymap)
+(bind-key "M-p" custom-keymap)
 
 ;; --------
 ;; Search:

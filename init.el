@@ -67,6 +67,20 @@
   :hook (python-mode . blacken-mode))
 ;; (add-hook python-mode-hook #'flycheck-mode))
 
+(use-package web-mode
+  :mode (("\\.html?\\'" . web-mode)
+         ;;  ("\\.phtml\\'" . web-mode)
+         ;; ("\\.tpl\\.php\\'" . web-mode)
+         ;; ("\\.[agj]sp\\'" . web-mode)
+         ;; ("\\.as[cp]x\\'" . web-mode)
+         ;; ("\\.erb\\'" . web-mode)
+         ;; ("\\.mustache\\'" . web-mode)
+         ;; ("\\.djhtml\\'" . web-mode)
+         ))
+
+(use-package pug-mode
+  :mode "\\.pug$")
+
 (use-package which-key
   :config (which-key-mode))
 

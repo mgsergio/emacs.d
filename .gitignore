@@ -1,3 +1,4 @@
+# Files created by emacs and packages.
 *~
 .DS_Store
 .lsp-session*
@@ -8,7 +9,11 @@ smex-items
 url
 games
 transient
+eshell
+server
 .fslckout
 .fossil-settings/
+
+# Files created by me (directly or indirectly)
 config.el
 custom.el

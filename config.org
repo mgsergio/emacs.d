@@ -18,15 +18,17 @@
 #+BEGIN_SRC emacs-lisp
   (use-package zoom
     :config (zoom-mode 1))
+
   (use-package writeroom-mode
-    :init (global-writeroom-mode)
     :config
     (setf writeroom-width 120
           writeroom-mode-line t
           ;; writeroom-header-line t
-          ;; writeroom-maximize-window nil
+          writeroom-maximize-window nil
           writeroom-global-effects (remq 'writeroom-set-fullscreen
-                                         writeroom-global-effects)))
+                                         writeroom-global-effects)
+          writeroom-major-modes '(text-mode prog-mode))
+    (global-writeroom-mode))
 
   (use-package which-key
     :config (which-key-mode))
@@ -53,7 +55,7 @@
 *** Flycheck
 #+BEGIN_SRC emacs-lisp
   (use-package flycheck
-    :init (global-flycheck-mode))
+    :config (global-flycheck-mode))
 #+END_SRC
 *** LSP
 #+BEGIN_SRC emacs-lisp

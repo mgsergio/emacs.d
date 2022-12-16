@@ -63,6 +63,8 @@
   (use-package lsp-mode
     :init
     (setf lsp-keymap-prefix "C-c l")
+    (when (eq system-type 'darwin)
+      (setf lsp-clients-typescript-npm-location "/opt/homebrew/bin/npm"))
     :hook (((typescript-mode js-mode) . lsp-deferred)
            ;; (python-mode . lsp-deferred)
            ;; which-key integration

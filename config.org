@@ -119,6 +119,15 @@
       ;; Make [m] magit available when switching projects.
       (require 'magit-extras)))
 #+END_SRC
+*** Docker
+#+BEGIN_SRC emacs-lisp
+  (use-package docker
+    :config (setf docker-tramp-use-names t)
+    :bind ("C-c d" . docker))
+
+  (use-package docker-tramp
+    :config (setf docker-tramp-use-names t))
+#+END_SRC
 ** Evil
 #+BEGIN_SRC emacs-lisp
   (use-package evil

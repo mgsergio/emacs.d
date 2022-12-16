@@ -11,6 +11,7 @@ games
 transient
 eshell
 server
+tramp
 .fslckout
 .fossil-settings/
 

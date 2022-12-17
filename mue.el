@@ -17,3 +17,5 @@
 (load-theme 'adwaita t)
 
 (fido-vertical-mode t)
+
+(add-hook 'before-save-hook 'delete-trailing-whitespace)

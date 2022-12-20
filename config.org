@@ -99,6 +99,7 @@
 *** Languages
 **** Python
 #+BEGIN_SRC emacs-lisp
+  (use-package pyvenv)
   (use-package python-isort
     :hook (python-mode . python-isort-on-save-mode))
   (use-package blacken

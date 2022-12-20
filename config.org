@@ -98,6 +98,10 @@
 #+END_SRC
 *** Languages
 **** Python
+- [ ] Replace both blacken and python-isort with either
+  - https://github.com/radian-software/apheleia
+  - https://github.com/lassik/emacs-format-all-the-code
+  make sure to put the settings in Programming section rather then Python.
 #+BEGIN_SRC emacs-lisp
   (use-package pyvenv)
   (use-package python-isort

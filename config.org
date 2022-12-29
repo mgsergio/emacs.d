@@ -73,6 +73,17 @@
            ("C-c f j" . 'counsel-file-jump)))
 #+END_SRC
 ** Programming
+*** Formatting
+#+BEGIN_SRC emacs-lisp
+  ;; An alternative package: https://github.com/lassik/emacs-format-all-the-code
+  (use-package apheleia
+    :config
+    (setf (alist-get 'isort apheleia-formatters)
+          '("isort" "--stdout" "-")
+          (alist-get 'python-mode apheleia-mode-alist)
+          '(isort black))
+    (apheleia-global-mode 1))
+#+END_SRC
 *** Flycheck
 #+BEGIN_SRC emacs-lisp
   (use-package flycheck
@@ -98,17 +109,8 @@
 #+END_SRC
 *** Languages
 **** Python
-- [ ] Replace both blacken and python-isort with either
-  - https://github.com/radian-software/apheleia
-  - https://github.com/lassik/emacs-format-all-the-code
-  make sure to put the settings in Programming section rather then Python.
 #+BEGIN_SRC emacs-lisp
   (use-package pyvenv)
-  (use-package python-isort
-    :hook (python-mode . python-isort-on-save-mode))
-  (use-package blacken
-    :hook (python-mode . blacken-mode))
-  ;; (add-hook python-mode-hook #'flycheck-mode))
 #+END_SRC
 **** Typescript
 #+BEGIN_SRC emacs-lisp

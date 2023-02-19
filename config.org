@@ -155,6 +155,10 @@
   (use-package docker-tramp
     :config (setf docker-tramp-use-names t))
 #+END_SRC
+** Editing
+#+BEGIN_SRC emacs-lisp
+  (use-package paredit)
+#+END_SRC
 ** Evil
 #+BEGIN_SRC emacs-lisp
   (use-package evil

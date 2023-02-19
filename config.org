@@ -219,7 +219,7 @@
 ;; --------
 ;; lsp bindings
 
-
+*** Bindings
 #+BEGIN_SRC emacs-lisp
   (unbind-key "C-z" global-map)
 
@@ -232,6 +232,7 @@
              ("t w" . writeroom-mode)
              ("t W" . whitespace-mode)
              ("t c" . flycheck-mode)
+             ("t F" . toggle-frame-fullscreen)
              ("t z" . zoom-mode)
              ("M-r" . ivy-resume)
              ("s-r" . ivy-resume))

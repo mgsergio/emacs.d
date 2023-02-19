@@ -72,6 +72,7 @@
            ("C-x b" . 'ivy-switch-buffer)
            ("C-c f j" . 'counsel-file-jump)))
 #+END_SRC
+- [ ] https://github.com/alexmurray/ivy-xref/
 ** Programming
 *** Formatting
 #+BEGIN_SRC emacs-lisp
@@ -160,6 +161,7 @@
   (use-package paredit)
 #+END_SRC
 ** Evil
+- [ ] prevent evil from kicking in in repls.
 #+BEGIN_SRC emacs-lisp
   (use-package evil
     :init

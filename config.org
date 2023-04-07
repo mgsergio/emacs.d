@@ -101,6 +101,9 @@
     (when (eq system-type 'darwin)
       (setf lsp-clients-typescript-npm-location "/opt/homebrew/bin/npm"))
     :hook (((typescript-mode js-mode) . lsp-deferred)
+           ((clojure-mode-hook
+             clojurescript-mode-hook
+             clojurec-mode-hook) . lsp-deferred)
            ;; (python-mode . lsp-deferred)
            ;; which-key integration
            (lsp-mode . lsp-enable-which-key-integration))
@@ -133,6 +136,12 @@
 
   (use-package pug-mode
     :mode "\\.pug$")
+#+END_SRC
+**** Clojure
+- [ ] TODO: format on save.
+#+BEGIN_SRC emacs-lisp
+  (use-package clojure-mode)
+  (use-package cider)
 #+END_SRC
 *** VCS
 #+BEGIN_SRC emacs-lisp

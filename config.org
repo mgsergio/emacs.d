@@ -152,6 +152,11 @@
                  (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
     :mode "\\.ya?ml\\'")
 #+END_SRC
+**** HashiCorp HCLTerraform
+#+BEGIN_SRC emacs-lisp
+  (use-package hcl-mode)
+  (use-package terraform-mode)
+#+END_SRC
 *** VCS
 #+BEGIN_SRC emacs-lisp
   (use-package vc-fossil

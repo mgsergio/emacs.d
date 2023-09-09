@@ -143,6 +143,15 @@
   (use-package clojure-mode)
   (use-package cider)
 #+END_SRC
+**** Yaml
+#+BEGIN_SRC emacs-lisp
+  (use-package yaml-mode
+    :config
+    (add-hook 'yaml-mode-hook
+              '(lambda ()
+                 (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
+    :mode "\\.ya?ml\\'")
+#+END_SRC
 *** VCS
 #+BEGIN_SRC emacs-lisp
   (use-package vc-fossil

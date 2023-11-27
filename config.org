@@ -181,7 +181,13 @@
 #+END_SRC
 ** Editing
 #+BEGIN_SRC emacs-lisp
-  (use-package paredit)
+  ;; (use-package paredit)
+  (use-package smartparens-mode
+    :ensure smartparens  ;; install the package
+    :hook (prog-mode text-mode markdown-mode) ;; add `smartparens-mode` to these hooks
+    :config
+    ;; load default config
+    (require 'smartparens-config))
 #+END_SRC
 ** Evil
 - [ ] prevent evil from kicking in in repls.

@@ -82,7 +82,8 @@
     (setf (alist-get 'isort apheleia-formatters)
           '("isort" "--stdout" "-")
           (alist-get 'python-mode apheleia-mode-alist)
-          '(isort black))
+          '(isort black)
+          apheleia-formatters-respect-indent-level nil)
     (apheleia-global-mode 1))
 #+END_SRC
 *** Flycheck

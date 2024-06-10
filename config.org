@@ -177,8 +177,6 @@
   (use-package docker
     :bind ("C-c d" . docker))
 
-  (use-package docker-tramp
-    :config (setf docker-tramp-use-names t))
 #+END_SRC
 ** Editing
 #+BEGIN_SRC emacs-lisp

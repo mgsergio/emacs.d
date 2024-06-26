@@ -1,5 +1,4 @@
 ;;; -*- lexical-binding: t; -*-
-
 (require 'dash)
 
 (defun symbol-maybe-value (sym)
@@ -8,15 +7,6 @@
 
 (defun relaxed-keymap-value (symbol-or-keymap &rest args)
   (pcase symbol-or-keymap
-    ;; ------------------------------ HERE --------------------------------------
-    ;; ((pred autoloadp)
-    ;;  (autoload-do-load symbol-or-keymap)
-    ;;  (apply #'relaxed-keymap-value symbol-or-keymap args))
-
-    ;; ((pred keywordp)
-    ;;  (unless (plist-get args :nil-on-error)
-    ;;    (error "%S is not a keymap" symbol-or-keymap)))
-
     ((pred (not symbolp))
      (if (keymapp symbol-or-keymap)
          symbol-or-keymap
@@ -56,42 +46,24 @@
 ;; (relaxed-keymap-p :conc-name)
 ;; (relaxed-keymap-p 'isearch-pre-move-point)
 
-(defun walk-keymap (keymap &rest args)
+(defun walk-keymap (keymap)
   (let* ((next '())
-         seen
-         (result (plist-get args :entries))
-         (start-path (plist-get args :start-path))
+         (result '())
+         (start-path '())
          (handle-binding (lambda (e b path)
-                           (message "e: %S\nb: %S\npath: %s" e b path)
                            (let* ((new-path (cons e path))
                                   (rec (list :keymap keymap
                                              :target b
                                              :sequence new-path)))
-                             ;; (when (eql e 8388720)
-                             ;;   (message "GOT THE BINDING OF MY DREAMS: %S" b))
                              (pcase b
                                ((pred keymapp)
-                                (message "KEYMAP FOUND!")
-
                                 (if (symbolp b)
                                     (progn
-                                      (message "KEYMAP IS A SYMBOL!")
                                       (push (plist-put rec :final nil)
-                                            result)
-                                      (unless (memq b seen)
-                                        (push (list :keymap b
-                                                    :path new-path)
-                                              next)))
-                                  (message "Pushing down a keymap that is NOT a symbol!")
+                                            result))
                                   (push (list :keymap b
                                               :path new-path)
-                                        next)
-                                  ;; (message "NEXT not looks like this: %S" (take 10 next))
-                                  (when (eql 8388720 e)
-                                    (push (plist-put (pop next)
-                                                     :dreamy t)
-                                          next))
-                                  ))
+                                        next)))
 
                                ((pred commandp)
                                 (push (plist-put rec :final t)
@@ -106,149 +78,73 @@
                 :path start-path)
           next)
 
-    ;; (message "Before while-let")
-    ;; (message "next: %S" next)
-
     (while-let ((current-item (pop next)))
-      (message "In while-let")
       (let ((current-map (plist-get current-item :keymap))
             ;; (not-seen-guard (not (memq current-map seen)))
             ;; (keymap-value (relaxed-keymap-value current-map))
             (current-path (plist-get current-item :path)))
 
-        (unless (memq current-map seen)
+        (dolist (entry (-> current-map
+                           relaxed-keymap-value
+                           cdr))
+          (pcase entry
+            ;; chat-table. Will traverse. TODO:
+            ((pred char-table-p) (message "char-table"))
 
-          (when (plist-get current-item :dreamy)
-            (message "HACK ACTIVATED"))
+            ;; vector. The keymap is most likely a menu map. Should I ignore it?
+            ((pred vectorp)
+             nil)
 
-          ;; (message "========")
-          ;; (message "current-item: %S" current-item)
-          ;; (message "current-map: %S" current-map)
-          ;; (message "========")
+            ;; A nested keymap. Traverse.
+            ((pred keymapp)
+             (push (list :keymap entry
+                         :path current-path)
+                   next))
 
-          (message "Before unless")
+            ;; Ingore
+            ((pred stringp)
+             nil)
 
-          (unless (listp (-> current-map
-                             relaxed-keymap-value
-                             cdr))
-            (message "Got smth strange: %S" current-map))
+            ;; menu-item. Ignore.
+            (`(,_e menu-item . ,_d)
+             nil)
 
-          (message "Before dolist")
-          (dolist (entry (-> current-map
-                             relaxed-keymap-value
-                             cdr))
-            (message "In dolist")
-            (pcase entry
-              ;; chat-table. Will traverse. TODO:
-              ((pred char-table-p) (message "char-table"))
+            ;; A keymap
+            (`(,e keymap . ,b)
+             (funcall handle-binding e `(keymap ,@b) current-path)
+             ;; (message "binding + menu-item")
+             )
 
-              ;; vector. The keymap is most likely a menu map. Should I ignore it?
-              ((pred vectorp)
-               (message "vector"))
+            ;; Simple menu item and a binding. Ignore
+            (`(,e ,_ . ,b)
+             ;; (funcall handle-binding e b current-path)
+             ;; (message "binding + menu-item")
+             )
 
-              ;; A nested keymap. Traverse.
-              ((pred keymapp)
-               (push (list :keymap entry
-                           :path current-path)
-                     next))
+            ;; Default binding.
+            (`(t . ,b)
+             (funcall handle-binding t b current-path)
+             ;; (message "default binding")
+             )
 
-              ;; Ingore
-              ((pred stringp)
-               (message "string")
-               nil)
-
-              ;; menu-item. Ignore.
-              (`(,_e menu-item . ,_d)
-               (message "menu-item")
-               nil)
-
-              ;; A keymap
-              (`(,e keymap . ,b)
-               (funcall handle-binding e `(keymap ,@b) current-path)
-               ;; (message "binding + menu-item")
-               )
-
-              ;; Simple menu item and a binding. Ignore
-              (`(,e ,_ . ,b)
-               ;; (funcall handle-binding e b current-path)
-               ;; (message "binding + menu-item")
-               )
-
-              ;; Default binding.
-              (`(t . ,b)
-               (funcall handle-binding t b current-path)
-               ;; (message "default binding")
-               )
-
-              ;; The simplest binding.
-              (`(,e . ,b)
-               (funcall handle-binding e b current-path)
-               ;; (message "binding %S: %S" e (type-of e))
-               )))
-          (when (symbolp current-map)
-            (push current-map seen))
-          )))
-    (message "SEEN MAPTS: %S" seen)
+            ;; The simplest binding.
+            (`(,e . ,b)
+             (funcall handle-binding e b current-path))))
+        ))
     result))
 
-(pp-eval-expression '(take 10000
-                           (seq-reverse
-                            (walk-keymap 'global-map))))
-(pp-eval-expression
- '(let ((entries '(TEST TEST TEST)))
-    (setf entries (walk-keymap 'global-map :entries entries))
-    entries))
 
-(walk-keymap 'Buffer-menu-mode-menu)
-
-
-;; (defun my-group-by (seq)
-;;   (let ((table '()))
-;;     (dolist (item seq)
-;;       (if-let ((target (plist-get item :target))
-;;                (sequence (plist-get item :sequence))
-;;                (entry (assoc target table)))
-;;           (push sequence (cdr entry))
-;;         (push (cons target (list sequence))
-;;               table)))
-;;     table))
-
-
+;;; Playground:
+;;
+;; (pp-eval-expression '(take 10000
+;;                            (seq-reverse
+;;                             (walk-keymap 'global-map))))
+;;
+;; (walk-keymap 'Buffer-menu-mode-menu)
+;;
 ;; (pp-eval-expression
-;;  '(seq-filter (lambda (x) (> (length x) 2))
-;;               (my-group-by (walk-keymap 'global-map)))
-;;  )
-
-
-(let ((entries '()))
-  (dolist (map (get-known-keymaps))
-    (message "Handling: %S" map)
-    (setf entries
-          (walk-keymap map :entries entries)))
-  entries)
-
-(let ((entries '()))
-  (dolist (map (get-known-keymaps))
-    (message "Handling: %S" map)
-    (setf entries
-          (walk-keymap map :entries entries)))
-  entries)
-
-(current-active-maps)
-
-(walk-keymap 'gnus-summary-score-map)
-(relaxed-keymap-p (symbol-function 'gnus-summary-score-map))
-(relaxed-keymap-p 'gnus-summary-score-map)
-(relaxed-keymap-value (symbol-function 'gnus-summary-score-map))
-(relaxed-keymap-value 'gnus-summary-score-map :nil-on-error t)
-(keymapp 'gnus-summary-score-map)
-(keymapp (symbol-function 'gnus-summary-score-map))
-(autoloadp 'gnus-summary-score-map)
-
-(autoload-do-load (symbol-function 'gnus-summary-score-map))
-
-
-
+;;  '(walk-keymaps (get-known-keymaps)))
+;;
 
 ;;; Interesting cases:
 ;;
@@ -261,44 +157,11 @@
 ;; II
 ;; (symbol-function 'gnus-summary-score-map) contains an autoload.
 ;;
-
-
-;; (seq-filter (lambda (x) (> (length (plist-get x :sequence))) 2)
-;;             (walk-keymap 'global-map))
-
-;; (key-description '(8388720 8388722))
-
-
-;;; Playground:
-
-;; (pp-eval-expression
-;;  '(let* ((b (seq-find (lambda (x) (and (consp x)
-;;                                       (eql (car x)
-;;                                            8388720)))
-;;                      global-map))
-;;         (m (make-symbol "m")))
-
-;;    (setf (symbol-function m)
-;;          (list 'keymap b))
-;;    (walk-keymap m)
-;;    )
-;; )
-
-
-;; (autoloadp (symbol-function '2C-command))
+;; (autoloadp (symbol-function '2C-command)) another example
 ;; (keymapp '2C-command)
 ;; (autoloadp #'2C-command)
 ;;
-;; (symbol-function  'help-command)
-;;
-;; (seq-filter (lambda (x) (and (symbolp x)
-;;                              ;; (relaxed-keymap-p x))
-;;                              ))
-;;             global-map)
-
-;; (length (get-known-keymaps))
-;; (length (seq-filter #'keymapp (get-known-keymaps)))
-;;
+;;; END: interesting cases.
 
 ;; Local Variables:
 ;; eval: (flycheck-disable-checker 'emacs-lisp-checkdoc)

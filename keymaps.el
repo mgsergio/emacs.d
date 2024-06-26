@@ -6,36 +6,43 @@
   (when (boundp sym)
     (symbol-value sym)))
 
-(defun relaxed-keymap-p (keymap-or-sym)
-  (or (keymapp keymap-or-sym)
-      (keymapp (symbol-maybe-value keymap-or-sym))))
-
-(defun relaxed-keymap-value-ex (symbol-or-keymap)
-  (unless (relaxed-keymap-p symbol-or-keymap)
-    (error "%S is not a keymap" symbol-or-keymap))
-  (if (symbolp symbol-or-keymap)
-      (or (symbol-function symbol-or-keymap)
-          (symbol-value symbol-or-keymap))
-    symbol-or-keymap))
-
-(defun relaxed-keymap-value (symbol-or-keymap)
-  (unless (relaxed-keymap-p symbol-or-keymap)
-    (error "%S is not a keymap" symbol-or-keymap))
+(defun relaxed-keymap-value (symbol-or-keymap &rest args)
   (pcase symbol-or-keymap
+    ;; ------------------------------ HERE --------------------------------------
+    ;; ((pred autoloadp)
+    ;;  (autoload-do-load symbol-or-keymap)
+    ;;  (apply #'relaxed-keymap-value symbol-or-keymap args))
+
+    ;; ((pred keywordp)
+    ;;  (unless (plist-get args :nil-on-error)
+    ;;    (error "%S is not a keymap" symbol-or-keymap)))
+
     ((pred (not symbolp))
-     symbol-or-keymap)
+     (if (keymapp symbol-or-keymap)
+         symbol-or-keymap
+       (unless (plist-get args :nil-on-error)
+         (error "%S is not a keymap" symbol-or-keymap))))
 
     ((pred keymapp)
-     (-> symbol-or-keymap
-         symbol-function
-         relaxed-keymap-value))
+     (when (-> symbol-or-keymap symbol-function autoloadp)
+       (autoload-do-load symbol-or-keymap))
+     (-as-> symbol-or-keymap it
+            (symbol-function it)
+            (apply #'relaxed-keymap-value it args)))
+
+    ((and (pred boundp)
+          (pred (lambda (x) (-> x symbol-value keymapp))))
+     (-as-> symbol-or-keymap it
+            (symbol-value it)
+            (apply #'relaxed-keymap-value it args)))
 
     (_
-     (-> symbol-or-keymap
-         symbol-value
-         relaxed-keymap-value))
-    ;; (symbol-value symbol-or-keymap))))
-    ))
+     (unless (plist-get args :nil-on-error)
+       (error "%S is not a keymap" symbol-or-keymap)))))
+
+(defun relaxed-keymap-p (maybe-keymap-or-sym)
+  (relaxed-keymap-value maybe-keymap-or-sym
+                        :nil-on-error t))
 
 (defun get-known-keymaps ()
   (let (maps)
@@ -44,20 +51,9 @@
                   (push x maps))))
     (seq-sort #'string< maps)))
 
-
-(length (get-known-keymaps))
-(length (seq-filter #'keymapp (get-known-keymaps)))
-
-;;
-
-
-;; (cl-loop for x in '(1 2 3)
-;;          for y in '(4 5 6)
-;;          collect `(,x . ,y))
-
-;; current path:: string
-;; command -> [(keymap path . is-global)]
-
+;; (get-known-keymaps)
+;; (relaxed-keymap-p :conc-name)
+;; (relaxed-keymap-p 'isearch-pre-move-point)
 
 (defun walk-keymap (keymap &optional start-path)
   (let* ((next '())
@@ -150,9 +146,9 @@
 
               ;; A nested keymap. Traverse. If a symbol, also remember the connection.
               ((pred keymapp)
-               (if (symbolp entry)
-                   (message "keymap symbol")
-                 (message "keymap value")))
+               (push (list :keymap keymap
+                           :path current-path)
+                     next))
 
               ;; Ingore
               ((pred stringp)
@@ -222,12 +218,31 @@
   (message "Handling: %S" map)
   (walk-keymap map))
 
-(keymapp menu-function-47)
-(symbol-function 'menu-function-47)
-(symbol-function 'menu-function-47)
-(symbol-function (symbol-value 'cider-clojure-mode-menu-open))
+(walk-keymap 'gnus-summary-score-map)
+(relaxed-keymap-p (symbol-function 'gnus-summary-score-map))
+(relaxed-keymap-p 'gnus-summary-score-map)
+(relaxed-keymap-value (symbol-function 'gnus-summary-score-map))
+(relaxed-keymap-value 'gnus-summary-score-map :nil-on-error t)
+(keymapp 'gnus-summary-score-map)
+(keymapp (symbol-function 'gnus-summary-score-map))
+(autoloadp 'gnus-summary-score-map)
 
-(relaxed-keymap-value 'cider-clojure-mode-menu-open)
+(autoload-do-load (symbol-function 'gnus-summary-score-map))
+
+
+
+
+;;; Interesting cases:
+;;
+;; I
+;; This is an example of a symbol having another symbol in a value cell, that
+;; has a keymap in its function cell.
+;; (symbol-function (symbol-value 'cider-clojure-mode-menu-open))
+;; (relaxed-keymap-value 'cider-clojure-mode-menu-open)
+;;
+;; II
+;; (symbol-function 'gnus-summary-score-map) contains an autoload.
+;;
 
 
 ;; (seq-filter (lambda (x) (> (length (plist-get x :sequence))) 2)
@@ -263,10 +278,12 @@
 ;;                              ))
 ;;             global-map)
 
+;; (length (get-known-keymaps))
+;; (length (seq-filter #'keymapp (get-known-keymaps)))
+;;
 
 ;; Local Variables:
 ;; eval: (flycheck-disable-checker 'emacs-lisp-checkdoc)
-;; eval: (progn
-;;         (smartparens-mode -1)
-;;         (electric-pair-mode t))
+;; eval: (smartparens-mode -1)
+;; eval: (electric-pair-mode t)
 ;; End:

@@ -133,6 +133,13 @@
         ))
     result))
 
+(defun walk-keymaps (keymaps)
+  (let ((results '()))
+    (dolist (keymap keymaps)
+      (push (walk-keymap keymap)
+            results))
+    (apply #'append results)))
+
 
 ;;; Playground:
 ;;

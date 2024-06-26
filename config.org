@@ -133,7 +133,13 @@
            ;; ("\\.erb\\'" . web-mode)
            ;; ("\\.mustache\\'" . web-mode)
            ;; ("\\.djhtml\\'" . web-mode)
-           ))
+           )
+    :custom
+    (web-mode-code-indent-offset 2)
+    (web-mode-css-indent-offset 2)
+    (web-mode-markup-indent-offset 2)
+    (web-mode-sql-indent-offset 2))
+
 
   (use-package pug-mode
     :mode "\\.pug$")

@@ -24,8 +24,9 @@
          (error "%S is not a keymap" symbol-or-keymap))))
 
     ((pred keymapp)
-     (when (-> symbol-or-keymap symbol-function autoloadp)
-       (autoload-do-load symbol-or-keymap))
+     (when-let ((maybe-autoload (symbol-function symbol-or-keymap))
+                (is-autoload (autoloadp maybe-autoload)))
+       (autoload-do-load maybe-autoload symbol-or-keymap))
      (-as-> symbol-or-keymap it
             (symbol-function it)
             (apply #'relaxed-keymap-value it args)))
@@ -55,10 +56,11 @@
 ;; (relaxed-keymap-p :conc-name)
 ;; (relaxed-keymap-p 'isearch-pre-move-point)
 
-(defun walk-keymap (keymap &optional start-path)
+(defun walk-keymap (keymap &rest args)
   (let* ((next '())
          seen
-         result
+         (result (plist-get args :entries))
+         (start-path (plist-get args :start-path))
          (handle-binding (lambda (e b path)
                            (message "e: %S\nb: %S\npath: %s" e b path)
                            (let* ((new-path (cons e path))
@@ -137,16 +139,16 @@
                              cdr))
             (message "In dolist")
             (pcase entry
-              ;; chat-table. Will traverse.
+              ;; chat-table. Will traverse. TODO:
               ((pred char-table-p) (message "char-table"))
 
               ;; vector. The keymap is most likely a menu map. Should I ignore it?
               ((pred vectorp)
                (message "vector"))
 
-              ;; A nested keymap. Traverse. If a symbol, also remember the connection.
+              ;; A nested keymap. Traverse.
               ((pred keymapp)
-               (push (list :keymap keymap
+               (push (list :keymap entry
                            :path current-path)
                      next))
 
@@ -189,9 +191,13 @@
     (message "SEEN MAPTS: %S" seen)
     result))
 
-;; (pp-eval-expression '(take 10000
-;;                            (seq-reverse
-;;                             (walk-keymap 'global-map))))
+(pp-eval-expression '(take 10000
+                           (seq-reverse
+                            (walk-keymap 'global-map))))
+(pp-eval-expression
+ '(let ((entries '(TEST TEST TEST)))
+    (setf entries (walk-keymap 'global-map :entries entries))
+    entries))
 
 (walk-keymap 'Buffer-menu-mode-menu)
 
@@ -214,9 +220,21 @@
 ;;  )
 
 
-(dolist (map (get-known-keymaps))
-  (message "Handling: %S" map)
-  (walk-keymap map))
+(let ((entries '()))
+  (dolist (map (get-known-keymaps))
+    (message "Handling: %S" map)
+    (setf entries
+          (walk-keymap map :entries entries)))
+  entries)
+
+(let ((entries '()))
+  (dolist (map (get-known-keymaps))
+    (message "Handling: %S" map)
+    (setf entries
+          (walk-keymap map :entries entries)))
+  entries)
+
+(current-active-maps)
 
 (walk-keymap 'gnus-summary-score-map)
 (relaxed-keymap-p (symbol-function 'gnus-summary-score-map))

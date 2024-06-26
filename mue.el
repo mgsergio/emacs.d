@@ -19,3 +19,6 @@
 (fido-vertical-mode t)
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+(provide 'mue)
+;;; mue.el ends here.

@@ -280,6 +280,11 @@
     (keyfreq-autosave-mode 1))
 #+END_SRC
 
+** Misc settings
+#+BEGIN_SRC emacs-lisp
+  ;; Enable commands useful commands.
+  (put 'erase-buffer 'disabled nil)
+#+END_SRC
 * Maybe/Try [0/2]
 - [ ] TODO: (desktop-save-mode 1)
 - [-] Wanted packages/features: [2/12]

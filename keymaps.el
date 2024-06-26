@@ -80,8 +80,6 @@
 
     (while-let ((current-item (pop next)))
       (let ((current-map (plist-get current-item :keymap))
-            ;; (not-seen-guard (not (memq current-map seen)))
-            ;; (keymap-value (relaxed-keymap-value current-map))
             (current-path (plist-get current-item :path)))
 
         (dolist (entry (-> current-map
@@ -112,20 +110,16 @@
             ;; A keymap
             (`(,e keymap . ,b)
              (funcall handle-binding e `(keymap ,@b) current-path)
-             ;; (message "binding + menu-item")
              )
 
             ;; Simple menu item and a binding. Ignore
             (`(,e ,_ . ,b)
              ;; (funcall handle-binding e b current-path)
-             ;; (message "binding + menu-item")
              )
 
             ;; Default binding.
             (`(t . ,b)
-             (funcall handle-binding t b current-path)
-             ;; (message "default binding")
-             )
+             (funcall handle-binding t b current-path))
 
             ;; The simplest binding.
             (`(,e . ,b)

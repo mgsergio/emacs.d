@@ -148,6 +148,71 @@
     (apply #'append results)))
 
 
+;;; Tests:
+(ert-deftest pathfinder-relaxed-keymap-value ()
+  ;; By value.
+  (should (equal (make-keymap)
+                 (pathfinder-relaxed-keymap-value (make-keymap))))
+
+  ;; Variable holding a value.
+  (let ((km (make-keymap)))
+    (should (eq km
+                (pathfinder-relaxed-keymap-value km))))
+
+  ;; A keymap in a function cell.
+  (let ((sym (gensym)))
+    (setf (symbol-function sym) (make-keymap))
+    (should (eq (symbol-function sym)
+                (pathfinder-relaxed-keymap-value sym))))
+
+  ;; A keymap in a value cell.
+  (let ((sym (gensym)))
+    (setf (symbol-value sym) (make-keymap))
+    (should (eq (symbol-value sym)
+                (pathfinder-relaxed-keymap-value sym))))
+
+  ;; A symbol pointing to another symbol with a keymap.
+  (let ((outer-sym-fn (gensym))
+        (outer-sym-val (gensym))
+        (inner-sym (gensym)))
+    (setf (symbol-function inner-sym) (make-keymap)
+          (symbol-function outer-sym-fn) inner-sym
+          (symbol-value outer-sym-val) inner-sym)
+    (should (eq (symbol-function inner-sym)
+                (pathfinder-relaxed-keymap-value outer-sym-fn)))
+    (should (eq (symbol-function inner-sym)
+                (pathfinder-relaxed-keymap-value outer-sym-val))))
+
+  ;; An autoload a symbol-fynction
+  (let* ((sym 'pathfinder--test-autoload-keymap)
+         (tmp-file-name (make-temp-file "pathfiner-test-fixtures.el"
+                                        nil ; DIR-FLAG
+                                        ".el" ; SUFFIX
+                                        (format "(fset '%s (make-keymap))\n" (symbol-name sym)))))
+    (unwind-protect
+        (progn
+          (autoload sym
+            tmp-file-name
+            nil
+            nil
+            'keymap)
+
+          (cl-assert (autoloadp (symbol-function sym)))
+          (cl-assert (keymapp sym))
+
+          (let ((resulting-keymap (pathfinder-relaxed-keymap-value sym)))
+            (should (symbol-function sym))
+            (should (eq (symbol-function sym)
+                        resulting-keymap))))
+      (unintern sym nil)
+      (delete-file tmp-file-name))))
+
+
+;; To tun tests with latest changes:
+;;   (progn (eval-buffer) (ert t))
+;;
+;;; END: Tests
+
 ;;; Playground:
 ;;
 ;; (pp-eval-expression '(take 10000

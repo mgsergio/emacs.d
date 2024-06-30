@@ -71,7 +71,10 @@
 
                                ((pred not)
                                 (push (plist-put rec :final t)
-                                      result)))))))
+                                      result))
+
+                               (_
+                                (warn "Unexpected binding found: %S %S" e b)))))))
 
     ;; Push the first target to the stack/queue.
     (push (list :keymap keymap
@@ -86,8 +89,15 @@
                            relaxed-keymap-value
                            cdr))
           (pcase entry
-            ;; chat-table. Will traverse. TODO:
-            ((pred char-table-p) (message "char-table"))
+            ;; chat-table. Will traverse.
+            ((pred char-table-p)
+             (map-char-table (lambda (e b)
+                               (if (consp e)
+                                   (funcall handle-binding
+                                            `(,(car e) . ,(cdr e))  ;; Copy to avoid capturing by reference.
+                                            b current-path)
+                                 (funcall handle-binding e b current-path)))
+                             entry))
 
             ;; vector. The keymap is most likely a menu map. Should I ignore it?
             ((pred vectorp)
@@ -103,16 +113,17 @@
             ((pred stringp)
              nil)
 
-            ;; menu-item. Ignore.
-            (`(,_e menu-item . ,_d)
-             nil)
-
             ;; A keymap
             (`(,e keymap . ,b)
              (funcall handle-binding e `(keymap ,@b) current-path)
              )
 
+            ;; menu-item. Ignore.
+            (`(,_e menu-item . ,_d)
+             nil)
+
             ;; Simple menu item and a binding. Ignore
+            ;; TODO: I guess this one is never called.
             (`(,e ,_ . ,b)
              ;; (funcall handle-binding e b current-path)
              )
@@ -121,7 +132,9 @@
             (`(t . ,b)
              (funcall handle-binding t b current-path))
 
-            ;; The simplest binding.
+            ;; The simplest binding that is either a command, or some weird stuff.
+            ;; TODO: Should I only alow proper commands?
+            ;;       Or handle the "stuff" properly?
             (`(,e . ,b)
              (funcall handle-binding e b current-path))))
         ))

@@ -1,11 +1,11 @@
 ;;; -*- lexical-binding: t; -*-
 (require 'dash)
 
-(defun symbol-maybe-value (sym)
+(defun pathfinder-symbol-maybe-value (sym)
   (when (boundp sym)
     (symbol-value sym)))
 
-(defun relaxed-keymap-value (symbol-or-keymap &rest args)
+(defun pathfinder-relaxed-keymap-value (symbol-or-keymap &rest args)
   (pcase symbol-or-keymap
     ((pred (not symbolp))
      (if (keymapp symbol-or-keymap)
@@ -19,34 +19,34 @@
        (autoload-do-load maybe-autoload symbol-or-keymap))
      (-as-> symbol-or-keymap it
             (symbol-function it)
-            (apply #'relaxed-keymap-value it args)))
+            (apply #'pathfinder-relaxed-keymap-value it args)))
 
     ((and (pred boundp)
           (pred (lambda (x) (-> x symbol-value keymapp))))
      (-as-> symbol-or-keymap it
             (symbol-value it)
-            (apply #'relaxed-keymap-value it args)))
+            (apply #'pathfinder-relaxed-keymap-value it args)))
 
     (_
      (unless (plist-get args :nil-on-error)
        (error "%S is not a keymap" symbol-or-keymap)))))
 
-(defun relaxed-keymap-p (maybe-keymap-or-sym)
-  (relaxed-keymap-value maybe-keymap-or-sym
-                        :nil-on-error t))
+(defun pathfinder-relaxed-keymap-p (maybe-keymap-or-sym)
+  (pathfinder-relaxed-keymap-value maybe-keymap-or-sym
+                                   :nil-on-error t))
 
-(defun get-known-keymaps ()
+(defun pathfinder-get-known-keymaps ()
   (let (maps)
     (mapatoms (lambda (x)
-                (when (relaxed-keymap-p x)
+                (when (pathfinder-relaxed-keymap-p x)
                   (push x maps))))
     (seq-sort #'string< maps)))
 
-;; (get-known-keymaps)
+;; (pathfinder-get-known-keymaps)
 ;; (relaxed-keymap-p :conc-name)
 ;; (relaxed-keymap-p 'isearch-pre-move-point)
 
-(defun walk-keymap (keymap)
+(defun pathfinder-walk-keymap (keymap)
   (let* ((next '())
          (result '())
          (start-path '())
@@ -86,7 +86,7 @@
             (current-path (plist-get current-item :path)))
 
         (dolist (entry (-> current-map
-                           relaxed-keymap-value
+                           pathfinder-relaxed-keymap-value
                            cdr))
           (pcase entry
             ;; chat-table. Will traverse.
@@ -140,10 +140,10 @@
         ))
     result))
 
-(defun walk-keymaps (keymaps)
+(defun pathfinder-walk-keymaps (keymaps)
   (let ((results '()))
     (dolist (keymap keymaps)
-      (push (walk-keymap keymap)
+      (push (pathfinder-walk-keymap keymap)
             results))
     (apply #'append results)))
 
@@ -154,10 +154,10 @@
 ;;                            (seq-reverse
 ;;                             (walk-keymap 'global-map))))
 ;;
-;; (walk-keymap 'Buffer-menu-mode-menu)
+;; (pathfinder-walk-keymap 'Buffer-menu-mode-menu)
 ;;
 ;; (pp-eval-expression
-;;  '(walk-keymaps (get-known-keymaps)))
+;;  '(pathfinder-walk-keymaps (pathfinder-get-known-keymaps)))
 ;;
 
 ;;; Interesting cases:
@@ -176,6 +176,9 @@
 ;; (autoloadp #'2C-command)
 ;;
 ;;; END: interesting cases.
+
+(provide 'pathfinder)
+;;; pathfinder.el ends here.
 
 ;; Local Variables:
 ;; eval: (flycheck-disable-checker 'emacs-lisp-checkdoc)

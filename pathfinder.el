@@ -42,10 +42,6 @@
                   (push x maps))))
     (seq-sort #'string< maps)))
 
-;; (pathfinder-get-known-keymaps)
-;; (relaxed-keymap-p :conc-name)
-;; (relaxed-keymap-p 'isearch-pre-move-point)
-
 (defun pathfinder-walk-keymap (keymap)
   (let* ((next '())
          (result '())
@@ -207,6 +203,119 @@
       (unintern sym nil)
       (delete-file tmp-file-name))))
 
+(ert-deftest pathfinder-walk-keymap ()
+  ;; Trivial
+  (should (equal (pathfinder-walk-keymap (make-keymap))
+                 '()))
+
+  ;; A couple of normal bindings.
+  (let ((map (make-sparse-keymap)))
+    (keymap-set map "i" #'self-insert-command)
+    (keymap-set map "f" #'find-file)
+    (should (equal (pathfinder-walk-keymap map)
+                   (list (list :keymap map
+                               :target #'self-insert-command
+                               :sequence `(,?i)
+                               :final t)
+                         (list :keymap map
+                               :target #'find-file
+                               :sequence `(,?f)
+                               :final t)))))
+
+  ;; A char-table is handled properly
+  (let ((map (make-keymap)))
+    (keymap-set map "a" 'self-insert-command)
+    (keymap-set map "b" 'self-insert-command)
+    (keymap-set map "c" 'self-insert-command)
+    ;; d is intentionally skipped to create two intervals.
+    (keymap-set map "e" 'self-insert-command)
+    (keymap-set map "f" 'self-insert-command)
+    (keymap-set map "g" 'self-insert-command)
+
+    (cl-assert (equal (length map) 2))
+
+    (should (seq-set-equal-p (pathfinder-walk-keymap map)
+                             (list (list :keymap map
+                                         :target #'self-insert-command
+                                         :sequence `((?a . ?c))
+                                         :final t)
+                                   (list :keymap map
+                                         :target #'self-insert-command
+                                         :sequence `((?e . ?g))
+                                         :final t)))))
+
+  ;; Nested maps
+  (let ((inner-map-1 (make-sparse-keymap))
+        (inner-map-2 (make-sparse-keymap))
+        (outer-map (make-sparse-keymap)))
+    (keymap-set inner-map-1 "i" #'self-insert-command)
+    (keymap-set inner-map-2 "f" #'find-file)
+    (keymap-set outer-map "h" #'help)
+    ;; NOTE: I'm not using make-comosed-keymap intentionally,
+    ;;       because I want the exact structure of my keymap:
+    ;;       (keymap binding (keymap ...) (keymap ...))
+    (setf outer-map
+          (append outer-map
+                  (list inner-map-1
+                        inner-map-2)
+                  nil))
+    (should (seq-set-equal-p (pathfinder-walk-keymap outer-map)
+                             (list (list :keymap outer-map
+                                         :target #'help
+                                         :sequence `(,?h)
+                                         :final t)
+                                   (list :keymap outer-map
+                                         :target #'self-insert-command
+                                         :sequence `(,?i)
+                                         :final t)
+                                   (list :keymap outer-map
+                                         :target #'find-file
+                                         :sequence `(,?f)
+                                         :final t)))))
+
+  ;; Recursive
+  (let ((inner-map-1 (make-sparse-keymap))
+        (inner-map-2 (make-sparse-keymap))
+        (outer-map (make-sparse-keymap)))
+    (keymap-set inner-map-1 "i" #'self-insert-command)
+    (keymap-set inner-map-2 "f" #'find-file)
+    (keymap-set outer-map "h" #'help)
+    ;; NOTE: I'm not using make-comosed-keymap intentionally,
+    ;;       because I want the exact structure of my keymap:
+    ;;       (keymap binding (keymap ...
+    ;;                               (keymap ...)))
+    (setf inner-map-2
+          (append inner-map-2 (list inner-map-1) nil)
+          outer-map
+          (append outer-map (list inner-map-2) nil))
+    (should (seq-set-equal-p (pathfinder-walk-keymap outer-map)
+                             (list (list :keymap outer-map
+                                         :target #'help
+                                         :sequence `(,?h)
+                                         :final t)
+                                   (list :keymap outer-map
+                                         :target #'self-insert-command
+                                         :sequence `(,?i)
+                                         :final t)
+                                   (list :keymap outer-map
+                                         :target #'find-file
+                                         :sequence `(,?f)
+                                         :final t)))))
+
+  ;; Prefix key
+  (let ((map (make-sparse-keymap)))
+    (keymap-set map "C-x f" #'find-file)
+    (should (equal (pathfinder-walk-keymap map)
+                   (list (list :keymap map
+                               :target #'find-file
+                               :sequence '(?f ?\C-x)
+                               :final t)))))
+
+  ;; TODO:
+  ;; - [ ] Parent map
+  ;; - [ ] An innder kymap symbol in an outer keymap should
+  ;;       result in a :map set to inner keymap. Really???
+  )
 
 ;; To tun tests with latest changes:
 ;;   (progn (eval-buffer) (ert t))

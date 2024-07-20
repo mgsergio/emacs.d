@@ -326,6 +326,7 @@
 ;;
 ;;; END: Tests
 
+
 ;;; Playground:
 ;;
 ;; (pp-eval-expression '(take 10000
@@ -354,6 +355,145 @@
 ;; (autoloadp #'2C-command)
 ;;
 ;;; END: interesting cases.
+
+
+
+(defun pathfinder--keymap-tag-items (item)
+  (list :item item
+        :type
+        (pcase item
+          ((or (pred vectorp)
+               (pred char-table-p)
+               (pred stringp))
+           (type-of item))
+
+          ((pred keymapp)
+           'keymap)
+
+          (`(,_ menu-item . ,_)
+           'menu-item)
+
+          (`(,_ ,(pred stringp) . ,_)
+           'simple-menu-item)
+
+          (`(,_ . ,(pred commandp))
+           'command)
+
+          (`(,_ . ,(pred keymapp))
+           'prefix)
+
+          (_ 'unknown))))
+
+
+(ert-deftest test-pathfinder--keymap-tag-items ()
+  (pcase-dolist (`(,input . ,type)
+                 `(("Hello" . string)
+                   (,(make-char-table 'test) . char-table)
+                   ([1 2 3] . vector)
+
+                   ((event menu-item bla bla bla) . menu-item)
+                   ((event "foo" bla bla bla) . simple-menu-item)
+
+                   ((?h . find-file) . command)
+                   ((?h . "Hello") . command)
+                   ((?h . [1 2 3]) . command)
+
+                   ((?h . ,(make-sparse-keymap)) . prefix)
+
+                   (123 . unknown)
+                   ((?h . (lambda ())) . unknown)))
+
+    (should (equal (pathfinder--keymap-tag-items input)
+                   (list :item input
+                         :type type)))))
+
+
+(defun pathfinder--make-parent-keymap-repack-and-tag-xf ()
+  (lambda (rf)
+    (let ((first-keymap-sym-seen nil)
+          (collecting-parent nil)
+          (parent-keymap '()))
+
+      (lambda (&rest args)
+        (pcase args
+          ('() (funcall rf))
+
+          (`(,acc)
+           ;; The alternative is to just skip the second 'keymap
+           ;; and handle all binding as if they belonged to the child keymap.
+           (funcall rf
+                    (if parent-keymap
+                        (funcall rf
+                                 acc
+                                 (reverse parent-keymap))
+                      acc)))
+
+          (`(,acc ,x)
+           (cond
+            (collecting-parent
+             (push x parent-keymap)
+             acc)
+
+            ((eq x 'keymap)
+             (if first-keymap-sym-seen
+                 (progn
+                   (setf collecting-parent t)
+                   (push x parent-keymap)
+                   acc)
+               (setf first-keymap-sym-seen t)
+               (funcall rf acc x)))
+
+            (t
+             (funcall rf acc x)))))))))
+
+
+(ert-deftest test-pathfinder--make-parent-keymap-repack-and-tag-xf ()
+  (let ((rf (lambda (&rest args)
+              (pcase args
+                ('() '())
+                (`(,acc) (reverse acc))
+                (`(,acc ,x) (cons x acc))))))
+
+    (pcase-dolist (`(,input . ,result)
+                   (list
+                    ;; No parent keymap
+                    (cons '(keymap (?h . self-insert-command))
+                          '(keymap (?h . self-insert-command)))
+
+                    ;; Parent keymap present
+                    (cons '(keymap (?h . self-insert-command)
+                                   (?t . self-insert-command) .
+                                   (keymap (?q . self-insert-command)))
+                          '(keymap (?h . self-insert-command)
+                                   (?t . self-insert-command)
+                                   (keymap (?q . self-insert-command))))
+
+                    ;; Parent kaymap present and came from a symbol
+                    (let ((map (make-sparse-keymap))
+                          (parent (make-sparse-keymap))
+                          (sym (gensym)))
+                      (keymap-set map "f" 'self-insert-command)
+                      (keymap-set parent "g" 'self-insert-command)
+                      (setf (symbol-function sym) parent)
+                      (set-keymap-parent map sym)
+                      (cons map
+                            '(keymap (?f . self-insert-command)
+                                     (keymap (?g . self-insert-command)))))
+
+                    ;; Other keymaps present in the original map are not affected...
+                    (cons '(keymap (keymap) (keymap))
+                          '(keymap (keymap) (keymap)))
+
+                    ;; ... even when a parent keymap is present
+                    (cons '(keymap (keymap) (keymap) keymap)
+                          '(keymap (keymap) (keymap) (keymap)))))
+
+      (should (equal (t-transduce (pathfinder--make-parent-keymap-repack-and-tag-xf)
+                                  rf
+                                  '()
+                                  input)
+                     result)))))
+
 
 
 ;; A little transdusers library.

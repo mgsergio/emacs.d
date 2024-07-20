@@ -136,6 +136,7 @@
         ))
     result))
 
+
 (defun pathfinder-walk-keymaps (keymaps)
   (let ((results '()))
     (dolist (keymap keymaps)
@@ -145,7 +146,7 @@
 
 
 ;;; Tests:
-(ert-deftest pathfinder-relaxed-keymap-value ()
+(ert-deftest test-pathfinder-relaxed-keymap-value ()
   ;; By value.
   (should (equal (make-keymap)
                  (pathfinder-relaxed-keymap-value (make-keymap))))
@@ -203,7 +204,7 @@
       (unintern sym nil)
       (delete-file tmp-file-name))))
 
-(ert-deftest pathfinder-walk-keymap ()
+(ert-deftest test-pathfinder-walk-keymap ()
   ;; Trivial
   (should (equal (pathfinder-walk-keymap (make-keymap))
                  '()))

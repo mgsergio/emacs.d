@@ -355,6 +355,161 @@
 ;;
 ;;; END: interesting cases.
 
+
+;; A little transdusers library.
+(defun t-transduce (xf f &rest args)
+  (pcase args
+    (`(,col)
+     (t-transduce xf f (funcall f) col))
+
+    (`(,init ,col)
+     (let* ((f (funcall xf f))
+            (fold (cl-reduce f col
+                             :initial-value init)))
+       (funcall f fold)))))
+
+
+(defun t-compose (f &rest fs)
+  (pcase fs
+    ('() f)
+    (`(,g) (lambda (&rest args)
+             (funcall f (pcase args
+                          (`() (funcall g))
+                          (`(,a) (funcall g a))
+                          (`(,a ,b) (funcall g a b))
+                          (_ (apply g args))))))
+    (`(,g . ,rest) (cl-reduce #'t-compose
+                              `(,f ,g ,@rest)))))
+
+
+(defun t-completing (f &optional cf)
+  (let ((cf (or cf #'identity)))
+    (lambda (&rest args)
+      (pcase args
+        ('() (funcall f))
+        (`(,a) (funcall cf a))
+        (`(,a ,b) (funcall f a b))))))
+
+
+(defun t-map (f)
+  (lambda (rf)
+    (lambda (&rest args)
+      (pcase args
+        ('() (funcall rf))
+        (`(,acc) (funcall rf acc)) ;; ???
+        (`(,acc ,x) (funcall rf
+                             acc
+                             (funcall f x)))))))
+
+
+(defun t-filter (f)
+  (lambda (rf)
+    (lambda (&rest args)
+      (pcase args
+        ('() (funcall rf))
+        (`(,acc) (funcall rf acc))
+        (`(,acc ,x) (if (funcall f x)
+                        (funcall rf acc x)
+                      acc))))))
+
+
+;;; Transducers Tests:
+(ert-deftest test-t-transduce ()
+  ;; Col is empty; init is provided.
+  (should (equal (t-transduce #'identity
+                              #'+
+                              '())
+                 0))
+
+  ;; Col is empty; init is not provided.
+  (should (equal (t-transduce #'identity
+                              #'+
+                              5
+                              '())
+                 5))
+
+  ;; Init is provided.
+  (should (equal (t-transduce #'identity
+                              #'+
+                              0
+                              '(1 2 3))
+                 6))
+
+  ;; Init is not provided.
+  (should (equal (t-transduce #'identity
+                              #'+
+                              '(1 2 3))
+                 6)))
+
+
+(ert-deftest test-t-compose ()
+  (should (equal (t-compose #'+) #'+))
+  (let ((f (t-compose (lambda (&rest args)
+                        `(outer ,@args))
+                      (lambda (&rest args)
+                        `(middle ,@args))
+                      (lambda (&rest args)
+                        `(inner ,@args)))))
+
+    (should (equal (funcall f)
+                   '(outer (middle (inner)))))
+
+    (should (equal (funcall f 1)
+                   '(outer (middle (inner 1)))))
+
+    (should (equal (funcall f 1 2)
+                   '(outer (middle (inner 1 2)))))
+
+    (should (equal (funcall f 1 2 3)
+                   '(outer (middle (inner 1 2 3)))))))
+
+
+(ert-deftest test-t-completing ()
+  (should (let ((f (t-completing #'-)))
+            (and (equal (funcall f)
+                        (-))
+                 ;; Completing with no cf provided turns any function with arity-1
+                 ;; into the identity function.
+                 (equal (funcall f 3)
+                        3)
+                 (equal (funcall f 2 4)
+                        (- 2 4)))))
+
+
+  (should (let ((f (t-completing #'-
+                                 (lambda (x) (* x x)))))
+            (and (equal (funcall f)
+                        (-))
+                 ;; Completing with cf provided turns any function with arity-1
+                 ;; into cf.
+                 (equal (funcall f -3)
+                        9)
+                 (equal (funcall f 2 4)
+                        (- 2 4))))))
+
+
+(ert-deftest test-t-map ()
+  (should (equal (t-transduce (t-map (lambda (x) (* x x)))
+                              #'+
+                              '(1 2 3 4))
+                 30)))
+
+
+(ert-deftest test-t-filter ()
+  (should (equal (t-transduce (t-filter #'cl-oddp)
+                              #'+
+                              '(1 2 3 4 5))
+                 9))
+
+  (should (equal (t-transduce (t-filter #'cl-oddp)
+                              #'+
+                              '(1))
+                 1)))
+
+;;; END: Transducer tests
+
+
+
 (provide 'pathfinder)
 ;;; pathfinder.el ends here.
 

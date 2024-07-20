@@ -118,6 +118,9 @@
             (`(,_e menu-item . ,_d)
              nil)
 
+            ;; `'(,e (pred stringp) . ,b) -- a simple menu item.
+            ;; e is most likelly a symbol.
+
             ;; Simple menu item and a binding. Ignore
             ;; TODO: I guess this one is never called.
             (`(,e ,_ . ,b)

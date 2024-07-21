@@ -148,6 +148,8 @@
     (apply #'append results)))
 
 
+
+
 ;;; Tests:
 (ert-deftest test-pathfinder-relaxed-keymap-value ()
   ;; By value.
@@ -321,6 +323,7 @@
   ;;       result in a :map set to inner keymap. Really???
   )
 
+
 ;; To tun tests with latest changes:
 ;;   (progn (eval-buffer) (ert t))
 ;;
@@ -358,7 +361,7 @@
 
 
 
-(defun pathfinder--keymap-tag-items (item)
+(defun pathfinder--tag-keymap-items (item)
   (list :item item
         :type
         (pcase item
@@ -385,7 +388,7 @@
           (_ 'unknown))))
 
 
-(ert-deftest test-pathfinder--keymap-tag-items ()
+(ert-deftest test-pathfinder--tag-keymap-items ()
   (pcase-dolist (`(,input . ,type)
                  `(("Hello" . string)
                    (,(make-char-table 'test) . char-table)
@@ -403,7 +406,7 @@
                    (123 . unknown)
                    ((?h . (lambda ())) . unknown)))
 
-    (should (equal (pathfinder--keymap-tag-items input)
+    (should (equal (pathfinder--tag-keymap-items input)
                    (list :item input
                          :type type)))))
 

@@ -291,6 +291,62 @@
   ;; Enable commands useful commands.
   (put 'erase-buffer 'disabled nil)
 #+END_SRC
+** Dired
+#+BEGIN_SRC elisp
+  (require 'sort)
+  (require 'dired)
+
+
+  (defun my/sort-directory-first (reverse beg end)
+    (interactive "P\nr")
+    (save-excursion
+      (save-restriction
+        (narrow-to-region beg end)
+        (goto-char (point-min))
+        (sort-subr nil
+                   'forward-line
+                   'end-of-line
+                   ;; We're interested in the first letter of the record, if it's ?d,
+                   ;; we're looking at a directory.
+                   (lambda ()
+                     (skip-chars-forward "[:space:]")
+                     (char-after))
+                   ;; ENDKEYFUNC is not needed for STARTKEYFUNC returns a non-nil value.
+                   nil
+                   ;; Sort a before b if a is directory and b is not.
+                   (lambda (a b)
+                     (and
+                      (eql a ?d)
+                      (not (eql b ?d))))))))
+
+  (defun my/dired-directory-first-hook ()
+    (save-excursion
+      (goto-char (point-min))
+      (let ((inhibit-read-only t)
+            donep)
+        (while (not donep)
+          (my/sort-directory-first nil
+                                   (progn (forward-line)  ;; Skip the header.
+                                          (point))
+                                   (progn (forward-paragraph)
+                                          (point)))
+          (let ((next-subdir-point (dired-next-subdir 1 t t)))
+            (setf donep (or
+                         ;; No more subdirs.
+                         (not next-subdir-point)
+                         ;; A new subdir was added, and we're narrowed to its scope.
+                         ;; This guards us from entering and infinite loop where dired-next-subdir
+                         ;; returns non-nil, but we can't advance point.
+                         (eql next-subdir-point (point-max))))))
+        (set-buffer-modified-p nil))))
+
+  (add-hook 'dired-after-readin-hook
+            'my/dired-directory-first-hook)
+
+  ;; (remove-hook 'dired-after-readin-hook
+  ;;              'my/dired-directory-first-hook)
+#+END_SRC
+
 * Maybe/Try [0/2]
 - [ ] TODO: (desktop-save-mode 1)
 - [-] Wanted packages/features: [2/12]

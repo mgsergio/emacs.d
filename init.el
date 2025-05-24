@@ -17,3 +17,5 @@
 (setf use-package-always-ensure t)
 
 (org-babel-load-file "~/.emacs.d/config.org")
+(put 'narrow-to-page 'disabled nil)
+(put 'narrow-to-region 'disabled nil)

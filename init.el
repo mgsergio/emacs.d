@@ -5,10 +5,6 @@
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/") t)
 
-;; TODO: Expand to all directories with site-listp/.
-(add-to-list 'load-path
-             "/opt/homebrew/share/emacs/site-lisp/maxima" t)
-
 (package-initialize)
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))

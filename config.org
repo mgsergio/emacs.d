@@ -1,3 +1,5 @@
+* Preferences
+#+STARTUP: content
 * Emacs Config
 ** Prelude
 #+BEGIN_SRC emacs-lisp

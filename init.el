@@ -15,3 +15,12 @@
 (org-babel-load-file "~/.emacs.d/config.org")
 (put 'narrow-to-page 'disabled nil)
 (put 'narrow-to-region 'disabled nil)
+
+
+;; Load local init if exists.
+;; Local init is a file with configuration specific to a particular
+;; environment that should not be a part of a general config.
+(let ((local-init (file-name-concat user-emacs-directory
+                                    "local-init.el")))
+  (when (file-regular-p local-init)
+    (load-file local-init)))

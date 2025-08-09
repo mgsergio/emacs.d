@@ -248,6 +248,25 @@
   (use-package savehist
     :init
     (savehist-mode))
+
+#+END_SRC
+**** TODO Learn amout minibuffer features, and configuration
+#+BEGIN_SRC emacs-lisp
+  ;;; TODO: Learn about the minibuffer setup.
+  ;;;       Source: https://github.com/minad/vertico?tab=readme-ov-file#configuration.
+  ;; Emacs minibuffer configurations.
+  ;; (use-package emacs
+  ;;   :custom
+  ;;   ;; Support opening new minibuffers from inside existing minibuffers.
+  ;;   (enable-recursive-minibuffers t)
+  ;;   ;; Hide commands in M-x which do not work in the current mode.  Vertico
+  ;;   ;; commands are hidden in normal buffers. This setting is useful beyond
+  ;;   ;; Vertico.
+  ;;   (read-extended-command-predicate #'command-completion-default-include-p)
+  ;;   ;; Do not allow the cursor in the minibuffer prompt
+  ;;   (minibuffer-prompt-properties
+  ;;    '(read-only t cursor-intangible t face minibuffer-prompt)))
+#+END_SRC
 ** Programming
 *** Formatting
 #+BEGIN_SRC emacs-lisp
